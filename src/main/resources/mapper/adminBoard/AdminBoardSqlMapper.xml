@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rm.roaming.adminboard.mapper.AdminBoardSqlMapper">
+
+	<!-- item PK 생성 -->
+	<select id="createPk" resultType="int">
+		SELECT item_seq.nextval FROM dual
+	</select>
+
+	<!-- 쿠폰 생성 -->
+	<insert id="insertCoupon">
+		INSERT INTO coupon VALUES(
+				coupon_seq.nextval,
+				#{admin_id},
+				#{coupon_name},
+				#{coupon_context},
+				#{coupon_discount},
+				#{coupon_image},
+				#{coupon_count},
+				#{coupon_startdate},
+				#{coupon_enddate},
+				#{coupon_issue_start},
+				#{coupon_issue_end},
+				'N',
+				SYSDATE
+			)
+	</insert>
+
+	<!-- 사용가능한 쿠폰 조회 -->
+	<select id="selectCouponAll" resultType="com.rm.roaming.dto.CouponDto">
+		<![CDATA[
+		SELECT t2.* FROM (
+			SELECT t1.*, ROWNUM rnum FROM(
+				SELECT c.* FROM coupon c
+				WHERE coupon_enddate > sysdate
+				and coupon_count > 0
+				and coupon_deleted = 'N'
+				ORDER BY id DESC
+			) t1
+		)t2
+		WHERE t2.rnum >= ((#{page}-1) * 3) + 1 AND t2.rnum <= #{page} * 3
+		]]>
+	</select>
+
+	<!-- 사용가능한 쿠폰 조회 페이징 -->
+	<select id="manageCouponCount" resultType="int">
+		SELECT COUNT(*) FROM coupon
+	</select>
+
+	<!-- 만료된 쿠폰 조회 -->
+	<select id="selectNotExistCouponAll" resultType="com.rm.roaming.dto.CouponDto"> 
+		<![CDATA[
+		SELECT t2.* FROM (
+			SELECT t1.*, ROWNUM rnum FROM(	
+				SELECT c.* FROM coupon c
+				WHERE coupon_enddate < sysdate 
+				or coupon_count = 0
+				or coupon_deleted = 'Y'
+				ORDER BY id DESC
+			)t1
+		)t2
+		WHERE t2.rnum >= ((#{pageNum}-1) * 3) + 1 AND t2.rnum <= #{pageNum} * 3
+		]]>
+	</select>
+
+	<!-- 만료된 쿠폰 조회 페이징 -->
+	<select id="notExistManageCouponCount" resultType="int">
+		SELECT COUNT(*) FROM coupon
+	</select>
+
+	<!-- 쿠폰 수량 차감 -->
+	<select id="decreaseCouponCount" resultType="int">
+	SELECT count(*) FROM userCoupon WHERE coupon_id = #{coupon_id}
+	</select>
+
+	<!-- 중복발급 금지 -->
+	<select id="selectNotDuplicate" resultType="int">
+	SELECT count(*) FROM userCoupon where coupon_id = #{coupon_id} and user_id = #{user_id}
+	</select>
+
+	<!-- 특정 쿠폰 조회 -->
+	<select id="selectByCouponId" resultType="com.rm.roaming.dto.CouponDto">
+		SELECT  *
+		FROM coupon
+		WHERE id = #{id}
+	</select>
+
+
+	<!-- 쿠폰 삭제 -->
+	<update id="deleteCoupon">
+			UPDATE coupon 
+				SET coupon_deleted = 'Y'
+				WHERE id = #{id}
+	</update>
+
+	<!--  쿠폰 수정 -->
+	<update id="updateCoupon">
+		UPDATE coupon 
+			SET coupon_name = #{coupon_name}, coupon_context = #{coupon_context}, 
+			coupon_discount = #{coupon_discount}, coupon_image = #{coupon_image}, coupon_count = #{coupon_count},
+			coupon_startdate = #{coupon_startdate}, coupon_enddate = #{coupon_enddate}, coupon_issue_start = #{coupon_issue_start}, coupon_issue_end = #{coupon_issue_end}
+			WHERE id = #{id}
+	</update>
+
+	<!-- 상품 등록 -->
+	<insert id="insertItem">
+		INSERT INTO item VALUES(
+				#{id},
+				#{admin_id},
+				#{category_id},
+				#{item_name},
+				#{item_context},
+				#{item_price},
+				#{item_thumbnail},
+				#{item_count},
+				SYSDATE
+			)	
+	</insert>
+	
+	<!-- 상품 상세이미지 등록 -->
+	<insert id="insertItemImage">
+		INSERT INTO item_image VALUES(
+			item_image_seq.nextval,
+			#{item_id},
+			#{image}
+		)
+	</insert>
+	
+	<!-- 상품 상세이미지 조회 -->
+	<select id="selectItemImageByItemId" resultType="com.rm.roaming.dto.ItemImageDto">
+		SELECT * FROM item_image
+		WHERE item_id = #{item_id}
+	</select>
+
+	<!-- 상품 카테고리 -->
+	<select id="selectByCategoryId" resultType="com.rm.roaming.dto.ItemCategoryDto">
+		SELECT * FROM item_category
+		ORDER BY id 
+	</select>
+	
+	<!-- 상품관리 조회  -->
+	<select id="selectItemAll" resultType="com.rm.roaming.dto.ItemDto">
+		SELECT * FROM item 
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 상품 카테고리 ID  -->
+	<select id="selectByItemCategoryId" resultType="com.rm.roaming.dto.ItemCategoryDto">
+		SELECT * FROM item_category where id = #{id}
+	</select>
+
+	<!-- 상품 삭제 -->
+	<delete id="deleteItem">
+		DELETE FROM item WHERE id = #{id}
+	</delete>
+	
+	<!-- 상품 수정 -->
+	<update id="updateItem">
+		UPDATE item
+		SET item_name = #{item_name}, item_context = #{item_context}, 
+		item_price = #{item_price}, item_thumbnail = #{item_thumbnail}, item_count = #{item_count}, category_id = #{category_id}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 상품 이미지 수정-->
+	<update id="updateItemImage">
+		UPDATE item_image
+		SET image = #{image}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 특정 상품 조회 -->
+	<select id="selectByItemId" resultType="com.rm.roaming.dto.ItemDto">
+		SELECT *
+		FROM item
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 상품 수량 차감 -->
+	<select id="decreaseItemCount" resultType="int">
+		SELECT sum(COALESCE(ib.count, 0)) AS count_value
+FROM (SELECT #{item_id} AS item_id FROM DUAL) i
+LEFT JOIN item_buy ib ON i.item_id = ib.item_id
+
+	</select>
+	
+	
+	<!-- 판매자 공지사항 게시판 등록-->
+	<insert id="insertNotice">
+		INSERT INTO seller_noticeBoard VALUES(
+			seller_noticeBoard_seq.nextval,
+			#{admin_id},
+			#{title},
+			#{content},
+			0,
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 판매자 공지사항 게시판 리스트 -->
+	<select id="selectNoticeAll" resultType="com.rm.roaming.dto.SellerNoticeBoardDto">
+		SELECT *
+		FROM seller_noticeBoard
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 판매자 공지사항 게시판 게시글 조회 -->
+	<select id="selectNoticeId" resultType="com.rm.roaming.dto.SellerNoticeBoardDto">
+		SELECT *
+		FROM seller_noticeBoard
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 공지시항 게시판 조회수 증가 -->
+	<update id="increaseReadCount">
+		UPDATE seller_noticeBoard 
+		SET readCount = readCount + 1 
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 판매자 공지사항 게시판 게시글 수정 -->
+	<update id="updateSellerNotice">
+		UPDATE seller_noticeBoard
+		SET title = #{title}, content = #{content} 
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 판매자 공지사항 게시판 게시글 삭제 -->
+	<delete id="deleteSellerNotice">
+		DELETE FROM seller_noticeBoard WHERE id = #{id}
+	</delete>
+	
+	<!-- 판매자 신청관리 게시판 조회 -->
+   <select id="selectByHotelDocuList" resultType="com.rm.roaming.dto.SellerAuthorityDto">
+   SELECT hd.id, hd.docu_link, hls.category, h.hotel_name, h.hotel_loc, h.hotel_img, h.hotel_tel, h.status, h.content, hd.reg_date, hd.docu_return, hd.docu_status FROM hotel_docu hd INNER JOIN hotel h ON hd.hotel_id = h.id 
+INNER JOIN hotel_category hls ON h.hotel_category_id = hls.id ORDER BY hd.id DESC
+
+   </select>
+	
+	<!-- 판매자 신청관리 게시판 수락 업데이트 -->
+	<update id="updateSellerAuthorityAccept">
+		UPDATE hotel_docu
+		SET docu_status = '승인완료'
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 판매자 신청관리 게시판 거절 업데이트 -->
+	<update id="updateSellerAuthorityRefuse">
+		UPDATE hotel_docu
+		SET docu_status = '승인거절', docu_return = #{docu_return}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 신고 조회 -->
+   <select id = "selectAllReport" resultType="com.rm.roaming.dto.ReportDto">
+      SELECT *
+      FROM travel_post_report
+   </select>
+   
+   <!-- 신고받은 게시물 삭제 -->
+   <delete id = "deleteReportedPost">
+      DELETE FROM travel_post 
+      WHERE id = #{id}
+   </delete>
+   
+   <!-- 관리자 대쉬보드 -->
+   <!--  금일 날짜 조회 -->
+   <select id = "getToday" resultType="java.util.Date">
+      SELECT sysdate
+      FROM dual
+   </select>
+   
+   <!-- 일일 숙소 예약수 -->
+   <select id = "getTodayReserveCount" resultType="int">
+      SELECT nvl(COUNT(*),0) 
+      FROM reserve 
+      WHERE TRUNC(reserve_date) = TRUNC(sysdate)
+   </select>
+   <!-- 일일 숙소 예약 매출 -->
+   <select id ="getTodayReserveSale" resultType="int">
+      SELECT nvl(SUM(final_price),0) 
+      FROM reserve 
+      WHERE TRUNC(reserve_date) = TRUNC(sysdate)
+   </select>
+   <!-- 당월 일별 숙소 예약 매출 -->
+   <select id ="getMonthReserveSale" resultType="com.rm.roaming.dto.MonthSaleDto">
+      SELECT
+    TRUNC(all_dates.thisMonthDate) AS thisMonthDate,
+       NVL(SUM(final_price), 0) AS totalDailySale
+   FROM
+       (
+           SELECT
+               TRUNC(SYSDATE, 'MONTH') + LEVEL - 1 AS thisMonthDate
+           FROM
+               DUAL
+           CONNECT BY
+               <![CDATA[LEVEL <= EXTRACT(DAY FROM LAST_DAY(SYSDATE))
+       ) all_dates
+   LEFT JOIN reserve ON TRUNC(all_dates.thisMonthDate) = TRUNC(reserve_date)
+   GROUP BY
+       TRUNC(all_dates.thisMonthDate)
+   ORDER BY
+       TRUNC(all_dates.thisMonthDate)]]>
+   </select>
+   
+      
+   <!-- 일일 짐 서비스 예약수 -->
+   <select id ="getTodayZimCount" resultType="int">
+      SELECT nvl(COUNT(*),0) 
+      FROM zim_signup 
+      WHERE TRUNC(zim_reg_date) = TRUNC(sysdate)
+   </select>
+   <!-- 일일 짐 서비스 매출 조회 -->
+   <select id = "getTodayZimSale" resultType="int">
+      SELECT nvl(sum(zim_amount*zim_fee),0) from zim_signup_category sc 
+      INNER JOIN zim_category c ON sc.zim_category_id=c.id
+      INNER JOIN zim_signup su ON sc.zim_signup_id=su.id
+      WHERE trunc(su.zim_reg_date) = trunc(sysdate)
+   </select>
+   <!-- 당월 짐 서비스 매출 조회 -->
+   <select id = "getMonthZimSale" resultType="com.rm.roaming.dto.MonthSaleDto">
+      SELECT
+          TRUNC(all_dates.thisMonthDate) AS thisMonthDate,
+          NVL(SUM(zim_amount * zim_fee), 0) AS totalDailySale
+      FROM
+          (
+              SELECT
+                  TRUNC(SYSDATE, 'MONTH') + LEVEL - 1 AS thisMonthDate
+              FROM
+                  DUAL
+              CONNECT BY
+                  <![CDATA[LEVEL <= EXTRACT(DAY FROM LAST_DAY(SYSDATE))
+          ) all_dates
+      LEFT JOIN zim_signup su ON TRUNC(all_dates.thisMonthDate) = TRUNC(su.zim_reg_date)
+      LEFT JOIN zim_signup_category sc ON su.id = sc.zim_signup_id
+      LEFT JOIN zim_category c ON sc.zim_category_id = c.id
+      GROUP BY
+          TRUNC(all_dates.thisMonthDate)
+      ORDER BY
+          TRUNC(all_dates.thisMonthDate)]]>
+   </select>
+   
+   <!-- 구매된 포인트샵 상품수 -->
+   <select id ="getTodayItemCount" resultType="int">
+      SELECT nvl(SUM(ib.count),0) 
+      FROM item_buy ib 
+      WHERE TRUNC(reg_date) = TRUNC(sysdate)
+   </select>
+   <!-- 일일 포인트샵 사용된 포인트 -->
+   <select id="getTodayPointUsed" resultType="int">
+       SELECT nvl(SUM(count*item_price),0) 
+       FROM item_buy ib
+       INNER JOIN item i ON ib.item_id = i.id
+       WHERE TRUNC(ib.reg_date) = TRUNC(sysdate)
+   </select>
+   
+   <!-- 처리중 문의게시글수 -->
+   <select id = "getQaNotAnswered" resultType = "int">
+      select count(*) from qa_board where qa_comment_content is null
+   </select>
+	
+	
+
+
+
+
+
+</mapper>

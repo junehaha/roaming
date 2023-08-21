@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.rm.roaming.userzim.mapper.UserZimSqlMapper">
+	
+	<!-- 짐 신청(날짜,장소) insert -->
+	<insert id="insertZimSignUp">
+		insert into zim_signup values(
+		#{id},
+		#{user_id},
+		#{start_address},
+		#{start_date},
+		#{arrive_address},
+		#{arrive_date},
+		 <![CDATA[${zim_image_link != null ? "'" + zim_image_link + "'" : "null"}]]>,
+		'배송준비중',
+		sysdate
+		)
+	</insert>
+	
+	<!-- 짐 카테고리 종류 select -->				
+	<select id="selectZimCategory" resultType="com.rm.roaming.dto.ZimCategoryDto">
+		select * from zim_category order by id asc
+	</select>
+
+<resultMap type="com.rm.roaming.dto.ReservedAddressDto" id="resultmap">
+     <result property="hotel_name" column="hotel_name"/>
+     <result property="hotel_loc" column="hotel_loc"/>
+     <result property="room_number" column="room_number"/>
+   </resultMap>
+
+
+	
+	<!-- 최근 예약한 숙소 주소 가져오기 select -->
+	<select id ="selectReservedAddresss" resultMap="resultmap">
+		SELECT hotel_name, hotel_loc, room_number FROM(
+		    SELECT r1.*, ROWNUM rm FROM (
+		        SELECT *
+		        FROM hotel ht
+		        INNER JOIN room_group rg ON ht.id = rg.hotel_id
+		        INNER JOIN reserve res ON res.room_group_id = rg.id
+		        INNER JOIN room rm ON rm.room_group_id = rg.id
+		        WHERE res.user_id = #{userId}
+		        ORDER BY reserve_date DESC
+		    ) r1
+		) r2 
+		<![CDATA[
+		WHERE rm <= 1
+		]]>	
+	</select>
+	
+	<!-- 짐 신청2(짐 종류,수량) insert -->
+	<insert id="insertZimCategoryList">
+		insert into zim_signup_category values(
+		zim_signup_category_seq.nextval,
+		#{zim_category_id},
+		#{zim_signup_id},
+		#{zim_amount}		
+		)		
+	</insert>
+	
+	<select id="createPK" resultType="int">
+		select zim_signup_seq.nextval from dual
+	</select>
+	
+	<!-- 짐배송 신청내역 -->
+	<select id="selectAllSignUp" resultType="com.rm.roaming.dto.ZimSignUpDto">
+		select * from zim_signup order by id desc
+	</select>
+	
+	<select id="selectZimSignUpById" resultType="com.rm.roaming.dto.ZimSignUpDto">
+		select * from zim_signup where id=#{signId}
+	</select>
+	
+	<select id="selectZimSignCateListById" resultType="com.rm.roaming.dto.ZimSignCateListDto">
+		select * from zim_signup_category where zim_signup_id=#{id}
+	</select>
+	
+	<select id="selectZimCategoryById" resultType="com.rm.roaming.dto.ZimCategoryDto">
+		select * from zim_category where id=#{zim_category_id}
+	</select>
+	
+	<select id="selectZimSignUpByUserId" resultType="com.rm.roaming.dto.ZimSignUpDto">
+		select * from zim_signup where user_id=#{userId} order by id desc
+	</select>
+	
+	<!-- 총 합계 -->
+	<select id="totalSum" resultType="String">
+		select to_char(sum(zim_amount*zim_fee), '9,999,999,999')
+		from zim_signup_category sc 
+		inner join zim_category c on sc.zim_category_id=c.id
+		where zim_signup_id=#{id}
+	</select>
+	
+	<!-- 짐 신청 삭제 -->
+	<delete id="cancelZimSignUp">
+		delete from zim_signup where id = #{id}
+	</delete>
+	
+	<delete id="cancelZimSignAndCategory">
+		delete from zim_signup_category where zim_signup_id = #{id}
+	</delete>
+	
+	<!-- 짐 서비스 리뷰-->
+	<select id="selectZimReview" resultType="com.rm.roaming.dto.ZimReviewDto">
+		select * from zim_review where zim_signup_id = #{signUpId}
+	</select>
+	
+	<insert id="insertZimReview">
+		insert into zim_review values(
+		zim_review_seq.nextval,
+		#{zim_signup_id},
+		#{zim_review_title},
+		#{zim_review_content},
+		#{zim_star},
+		sysdate
+		)
+	</insert>
+	
+	<!-- 짐 서비스 리뷰 삭제 -->
+	<delete id="deleteZimReview">
+		delete from zim_review where zim_signup_id = #{signUpId}
+	</delete>
+
+	<select id="selectZimAverageStar" resultType="double">
+		select nvl(avg(zim_star),0) avg from zim_review
+	</select>
+	
+	<select id="selectEightZimReview" resultType="com.rm.roaming.dto.ZimReviewDto">
+		select b.* from 
+    	(select a.*, rownum rm from 
+        (select * from zim_review order by id desc) a) b
+        <![CDATA[
+        where b.rm<=8
+        ]]>
+	</select> 
+	
+	<!-- 유저정보가져오기 -->
+	<select id="selectUserById" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{id}
+	</select>
+	
+	<select id="selectZimAmountById" resultType="int">
+		select count(*) from zim_signup_category where zim_signup_id = #{signId}
+	</select>
+	
+	<!-- 짐 배송상태 변경 및 이력 삽입-->
+	<update id="updateZimProgress">
+		update zim_signup 
+		set zim_progress = #{zim_progress}
+		where id = #{id}
+	</update>
+	
+	<insert id="insertZimDeliveryManage">
+		insert into zim_delivery_manage values (
+		zim_delivery_manage_seq.nextval,
+		#{admin_id},
+		#{zim_signup_id},
+		#{zim_prog_before},
+		#{zim_prog_after},
+		sysdate
+		)
+	</insert>
+	
+	<select id="selectZimDeliveryManage" resultType="com.rm.roaming.dto.ZimDeliveryManageDto">
+		select * from zim_delivery_manage order by delivery_reg_date desc
+	</select>
+</mapper>

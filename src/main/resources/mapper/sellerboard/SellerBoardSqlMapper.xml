@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.roaming.sellerboard.mapper.SellerBoardSqlMapper">
+	<select id="selectHotelCategoryList" resultType="com.rm.roaming.dto.HotelCategoryDto">
+		SELECT * FROM hotel_category
+	</select>
+	<select id="selectHotelSyscategory" resultType="com.rm.roaming.dto.HotelSyscategoryDto">
+		SELECT * FROM hotel_syscategory
+	</select>
+	<insert id="insertHotelSyscategory">
+		INSERT INTO hotel_link_syscategory VALUES(
+			hotel_link_syscategory_seq.nextval,
+			#{syscategory_id},
+			#{hotel_id}
+		)
+	</insert>
+	<insert id="insertHotel">
+		INSERT INTO hotel VALUES(
+			#{id},
+			#{seller_id},
+			#{hotel_category_id},
+			#{hotel_name},
+			#{hotel_loc},
+			null,
+			#{hotel_tel},
+			#{content},
+			'휴무',
+			SYSDATE
+		)
+	</insert>
+	<update id="insertHotelImg">
+		UPDATE hotel SET hotel_img = #{hotel_img}
+		WHERE id = #{id}
+	</update>
+	<insert id="insertDocu">
+		INSERT INTO hotel_docu VALUES(
+			hotel_docu_seq.nextval,
+			#{hotel_id},
+			#{docu_link},
+			null,
+			'대기',
+			SYSDATE
+		)
+	</insert>
+	<select id="createHotelPk" resultType="int">
+		SELECT hotel_seq.nextval from dual
+	</select>
+	<select id="selectMyHotelList" resultType="com.rm.roaming.dto.HotelDto">
+		SELECT * FROM hotel WHERE seller_id = #{seller_id} ORDER BY id
+	</select>
+	
+	<resultMap type="com.rm.roaming.dto.HotelListMapDto" id="hotelListMapDto">
+		<result property="id" column="id"/>
+		<result property="hotelName" column="hotel_name"/>
+		<result property="hotelImg" column="hotel_img"/>
+		<result property="hotelCategory" column="category"/>
+		<result property="docuStatus" column="docuStatus"/>
+		<result property="hotelStatus" column="hotelStatus"/>
+	</resultMap>
+	
+	<select id="selectHotelListAndDocuStatus" resultMap="hotelListMapDto">
+		SELECT h.id,h.hotel_name,h.hotel_img,c.category,d.docu_status as docuStatus,h.status as hotelStatus
+		 FROM hotel h 
+		 INNER JOIN hotel_docu d ON h.id=d.hotel_id 
+		 INNER JOIN hotel_category c ON h.hotel_category_id = c.id WHERE h.seller_id=#{seller_id}
+	</select>
+	<select id="selectMyHotelById" resultType="com.rm.roaming.dto.HotelDto">
+		SELECT * FROM hotel WHERE id = #{id}
+	</select>
+	<select id="selectMyFirstHotel" resultType="com.rm.roaming.dto.HotelDto">
+		 SELECT * FROM(
+		 SELECT a.* , ROWNUM rn from hotel a where seller_id = #{seller_id}  ORDER BY id
+		 ) WHERE rn = 1
+	</select>
+	<select id="createGroupPk" resultType="int">
+		SELECT room_group_seq.nextval from dual
+	</select>
+	<insert id="insertRoomGroup">
+		INSERT INTO room_group VALUES(
+			#{id},
+			#{hotel_id},
+			#{view_id},
+			#{room_group_name},
+			null,
+			#{price},
+			#{fixed_number}
+		)
+	</insert>
+	<update id="insertGroupImg">
+		UPDATE room_group SET room_group_img = #{room_group_img}
+		WHERE id = #{id}
+	</update>
+	<insert id="insertRoomGroupImg">
+		INSERT INTO room_group_img VALUES(
+			room_group_img_seq.nextval,
+			#{room_group_id},
+			#{detail_img}
+		)
+	</insert>
+	<insert id="insertGroupPlusOption">
+		INSERT INTO group_plus_option VALUES(
+			group_plus_option_seq.nextval,
+			#{room_group_id},
+			#{plus_option},
+			#{price}
+		)
+	</insert>
+	<insert id="insertCustomCategory">
+	INSERT INTO custom_category VALUES(
+		custom_category_seq.nextval,
+		#{room_group_id},
+		#{category_name}
+		)
+	</insert>
+	
+	<select id="selectGroupListByHotelId" resultType="com.rm.roaming.dto.RoomGroupDto">
+		SELECT * FROM room_group WHERE hotel_id = #{hotel_id} ORDER BY id
+	</select>
+	<select id="selectGroupById"  resultType="com.rm.roaming.dto.RoomGroupDto">
+		SELECT * FROM room_group WHERE id =#{id}
+	</select>
+	<select id="selectGroupImgByRoomGroupId" resultType="com.rm.roaming.dto.RoomGroupImgDto">
+		SELECT * FROM room_group_img WHERE room_group_id = #{room_group_id}
+	</select>
+	<select id="selectFirstGroup" resultType="com.rm.roaming.dto.RoomGroupDto">
+ 		select * from 
+ 		(select b.* , ROWNUM rn FROM (select a.* from room_group a WHERE hotel_id =#{hotel_id} ORDER BY id)b) where rn =1
+		 </select>
+		 
+		 
+	<select id="selectRoomViewList" resultType="com.rm.roaming.dto.RoomViewDto">
+		SELECT * FROM room_view ORDER BY id
+	</select>
+	<insert id="insertRoom">
+		INSERT INTO room VALUES(
+			room_seq.nextval,
+			#{room_group_id},
+			#{room_number}
+		)
+	</insert>
+	<select id="selectGroupPlusOptionByRoomGroupId" resultType="com.rm.roaming.dto.GroupPlusOptionDto">
+		SELECT * FROM group_plus_option WHERE room_group_id = #{room_group_id} ORDER BY id
+	</select>
+	<select id="selectCustomCategoryByRoomGroupId" resultType="com.rm.roaming.dto.CustomCategoryDto">
+		SELECT * FROM custom_category WHERE room_group_id = #{room_group_id} ORDER BY id
+	</select>
+	<select id="selectRoomByRoomGroupId" resultType="com.rm.roaming.dto.RoomDto">
+		SELECT * FROM room WHERE room_group_id = #{room_group_id} ORDER BY id
+	</select>
+	<select id="selectViewNameByRoomViewId" resultType="com.rm.roaming.dto.RoomViewDto">
+		SELECT * FROM room_view WHERE id = #{id}
+	</select>
+	
+	<select id="selectCurrentWeekSellPrice" resultType="com.rm.roaming.dto.RoomGroupDto">
+   <![CDATA[
+   SELECT rg.room_group_name,
+          COALESCE(SUM(CASE WHEN res.status = '취소' THEN 0 ELSE res.final_price END), 0) as price
+     FROM room_group rg
+          LEFT JOIN reserve res ON rg.id = res.room_group_id
+                             AND res.reserve_date >= TRUNC(SYSDATE, 'IW') 
+                             AND res.reserve_date < TRUNC(SYSDATE, 'IW') + 7 
+    WHERE rg.hotel_id = #{hotel_id}
+    GROUP BY rg.room_group_name
+      ]]>
+   </select>
+	
+	<select id="selectCountTodayReserve" resultType="com.rm.roaming.dto.ReserveDto">
+		<![CDATA[
+				SELECT rg.id AS room_group_id, 
+				COALESCE(SUM(CASE WHEN (re.start_date <= SYSDATE AND re.end_date > SYSDATE) THEN 1 ELSE 0 END), 0) AS final_price
+				FROM room_group rg
+				INNER JOIN room r ON rg.id = r.room_group_id
+				LEFT JOIN assign_room ar ON r.id = ar.room_id
+				LEFT JOIN reserve re ON ar.reserve_id = re.id
+				WHERE rg.hotel_id = #{hotel_id} 
+				GROUP BY rg.id
+		]]>
+	</select>
+	
+	<select id="selectRoomCountByGroupId" resultType="int">
+		SELECT count(*) FROM room WHERE room_group_id = #{room_group_id}
+	</select>
+	
+	
+	<resultMap type="com.rm.roaming.dto.CheckInOutDto" id="checkInOutResultMap">
+		<result property="userName" column="user_name"/>
+		<result property="phoneNumber" column="phone_number"/>
+		<result property="roomGroupName" column="room_group_name"/>
+		<result property="fixedNumber" column="fixed_number"/>
+		<result property="status" column="status"/>
+		<result property="id" column="id"/>
+	</resultMap>
+<select id="selectTodayCheckIn" resultMap="checkInOutResultMap">
+      SELECT rm.user_name, rm.phone_number, rg.room_group_name, rg.fixed_number,re.status,re.id
+      FROM reserve re
+      INNER JOIN room_group rg ON re.room_group_id = rg.id
+      INNER JOIN rm_user rm ON rm.id = re.user_id
+      WHERE re.start_date = TO_DATE(TO_CHAR(SYSDATE, 'YY/MM/DD'), 'YY/MM/DD')
+      AND re.room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})  AND re.status NOT IN('취소')
+   </select>
+
+	<insert id="insertAssignRoom">
+		INSERT INTO assign_room VALUES(
+			assign_room_seq.nextval,
+			#{room_id},
+			#{reserve_id}
+		)
+	</insert>
+	<select id="selectTodayCheckOut" resultMap="checkInOutResultMap">
+      SELECT rm.user_name, rm.phone_number, rg.room_group_name, rg.fixed_number,re.status,re.id
+      FROM reserve re
+      INNER JOIN room_group rg ON re.room_group_id = rg.id
+      INNER JOIN rm_user rm ON rm.id = re.user_id
+      WHERE re.end_date = TO_DATE(TO_CHAR(SYSDATE, 'YY/MM/DD'), 'YY/MM/DD')
+      AND re.room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})  AND re.status NOT IN('취소')
+   </select>
+	
+	<resultMap type="com.rm.roaming.dto.ReserveInfoDto" id="reserveInfoMap">
+	  <result property="roomGroupName" column="room_group_name"/>
+	  <result property="userName" column="user_name"/>
+	  <result property="phoneNumber" column="phone_number"/>
+	  <result property="fixedNumber" column="fixed_number"/>
+	  <result property="finalPrice" column="final_price"/>
+	  <result property="startDate" column="start_date"/>
+	  <result property="endDate" column="end_date"/>
+	  <result property="status" column="status"/>
+  	  <result property="id" column="id"/>
+  	   <collection property="optionList" ofType="com.rm.roaming.dto.OptionsDto">
+        <result column="plus_option" property="options"/>
+   	    </collection>
+	</resultMap>
+	
+	<select id="selectReserveListByDate" resultMap="reserveInfoMap">
+		SELECT rg.room_group_name,user_name,phone_number,rg.fixed_number,plus_option,re.final_price,re.start_date,re.end_date ,re.status,re.id FROM reserve re INNER JOIN room_group rg ON re.room_group_id =rg.id
+		LEFT JOIN option_reserve op ON re.id=op.reserve_id LEFT JOIN group_plus_option gp ON op.option_id = gp.id INNER JOIN rm_user ru ON re.user_id = ru.id
+		WHERE re.room_group_id IN (SELECT id FROM room_group WHERE hotel_id=#{hotel_id})
+		AND re.start_date = TO_DATE(#{date}, 'YY/MM/DD')
+	</select>
+	
+	<select id="selectReserveStatus" resultType="com.rm.roaming.dto.ReserveDto">
+		SELECT * FROM reserve WHERE id = #{id}
+	</select>
+	<update id="updateReserveCheckIn">
+		UPDATE reserve SET status = '입실'
+		WHERE id= #{id} 
+	</update>
+	<update id="updateReserveCheckOut">
+		UPDATE reserve SET status = '퇴실'
+		WHERE id= #{id} 
+	</update>
+	<select id="selectEmptyRoom" resultType="com.rm.roaming.dto.RoomDto">
+	<![CDATA[	SELECT * FROM room WHERE id NOT IN(
+    	SELECT ro.id FROM room ro INNER JOIN assign_room ar ON ro.id=ar.room_id INNER JOIN reserve re ON re.id=ar.reserve_id WHERE re.start_date<= TO_DATE(TO_CHAR(SYSDATE, 'yy/MM/dd')) AND TO_DATE(TO_CHAR(SYSDATE, 'yy/MM/dd')) < re.end_date
+		)AND room_group_id=(SELECT room_group_id FROM reserve WHERE id=#{id})]]>
+	</select>
+	
+	
+	<resultMap type="com.rm.roaming.dto.TimeLineDto" id="timeLineResultMap">
+		<result property="id" column="id"/>
+		<result property="title" column="user_name"/>
+		<result property="start" column="start_date"/>
+		<result property="end" column="end_date"/>
+		<result property="status" column="status"/>
+	</resultMap>
+	<select id="selectTimeLineInfo" resultMap="timeLineResultMap">
+		SELECT re.id, rm.user_name, TO_CHAR(re.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(re.end_date, 'YYYY-MM-DD') AS end_date,re.status
+		FROM reserve re
+		INNER JOIN rm_user rm ON re.user_id = rm.id
+		WHERE re.room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})
+	</select>
+	<resultMap type="com.rm.roaming.dto.TimeLineDetailDto" id="timeLineDetailMap">
+	  <result property="roomGroupName" column="room_group_name"/>
+	  <result property="userName" column="user_name"/>
+	  <result property="phoneNumber" column="phone_number"/>
+	  <result property="fixedNumber" column="fixed_number"/>
+	  <result property="finalPrice" column="final_price"/>
+	  <result property="startDate" column="start_date"/>
+	  <result property="endDate" column="end_date"/>
+	  <result property="status" column="status"/>
+  	  <result property="tid" column="tid"/>
+  	  <result property="reserveDate" column="reserve_date"/>
+  	  <result property="roomNumber" column="room_number"/>
+  	   <collection property="optionList" ofType="com.rm.roaming.dto.OptionsDto">
+        <result column="plus_option" property="options"/>
+   	    </collection>
+	</resultMap>
+	<select id="selectTimeLineDetailInfo" resultMap="timeLineDetailMap">
+		SELECT rg.room_group_name,user_name,phone_number,rg.fixed_number,plus_option,re.final_price,re.start_date,re.end_date ,re.status,re.id,re.tid,re.reserve_date,r.room_number FROM reserve re INNER JOIN room_group rg ON re.room_group_id =rg.id
+		LEFT JOIN option_reserve op ON re.id=op.reserve_id LEFT JOIN group_plus_option gp ON op.option_id = gp.id INNER JOIN rm_user ru ON re.user_id = ru.id LEFT JOIN assign_room ar ON ar.reserve_id = re.id LEFT JOIN room r ON ar.room_id= r.id 
+		WHERE re.id = #{reserve_id}
+	</select>
+	<select id="selectDayPriceByHotelId" resultType="com.rm.roaming.dto.DayPriceDto">
+		SELECT * FROM day_price WHERE room_group_id IN (SELECT id FROM room_group WHERE hotel_id=#{hotel_id})
+	</select>
+	<insert id="insertDayPrice">
+		INSERT INTO day_price VALUES(
+			day_price_seq.nextval,
+			#{room_group_id},
+			#{day},
+			#{change_price}
+		)
+	</insert>
+	<delete id="deleteDayPrice">
+		DELETE FROM day_price WHERE room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})
+	</delete>
+	
+	<select id="createSeasonPricePk" resultType="int">
+		SELECT season_price_seq.nextval from dual
+	</select>
+	
+	<insert id="insertSeasonPrice">
+		INSERT INTO season_price VALUES(
+			#{id},
+			#{fluct_name},
+			#{change_price},
+			#{start_date},
+			#{end_date},
+			SYSDATE
+		)
+	</insert>
+	
+	<insert id="insertSeasonPriceGroup">
+		INSERT INTO season_price_group VALUES(
+			season_price_group_seq.nextval,
+			#{room_group_id},
+			#{season_price_id}
+		)
+	</insert>
+	
+	<resultMap type="com.rm.roaming.dto.RequestMapSeasonPriceDto" id="seasonPriceMap">
+	  <result property="fluctName" column="fluct_name"/>
+	  <result property="id" column="id"/>
+	  <result property="changePrice" column="change_price"/>
+	  <result property="startDate" column="start_date"/>
+	  <result property="endDate" column="end_date"/>
+  	   <collection property="roomGroupNameList" ofType="com.rm.roaming.dto.RoomGroupNameDto">
+        <result column="room_group_name" property="roomGroupName"/>
+   	    </collection>
+	</resultMap>
+									
+	<select id="selectSeasonPriceList" resultMap="seasonPriceMap">
+		SELECT sp.id,sp.fluct_name,sp.change_price,TO_CHAR(sp.start_date, 'YYYY-MM-DD') AS start_date, TO_CHAR(sp.end_date, 'YYYY-MM-DD') AS end_date,rg.room_group_name FROM season_price sp INNER JOIN season_price_group spg ON sp.id= spg.season_price_id INNER JOIN
+		room_group rg ON spg.room_group_id = rg.id 
+		WHERE spg.room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})
+	</select>
+	<delete id="deleteSeasonPrice">
+		DELETE FROM season_price WHERE id = #{id}
+	</delete>
+	<delete id="deleteSeasonPriceGroup">
+		DELETE FROM season_price_group WHERE season_price_id = #{id}
+	</delete>
+	<update id="updateSeasonPrice">
+	    UPDATE season_price
+	    SET fluct_name = #{fluct_name},
+	        change_price = #{change_price},
+	        start_date = #{start_date},
+	        end_date = #{end_date}
+	    WHERE id = #{id}
+	</update>
+<select id="selectReserveDashOfMonth" resultType="com.rm.roaming.dto.ReserveDto">
+      SELECT COUNT(*) as id, NVL(SUM(final_price), 0) as room_group_id
+      FROM reserve
+      WHERE room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})
+       AND EXTRACT(MONTH FROM reserve_date) = #{month} AND status NOT IN('취소')
+   </select>
+   <select id="selectCancleReserveDashOfMonth" resultType="com.rm.roaming.dto.ReserveDto">
+      SELECT COUNT(*) as id, NVL(SUM(final_price), 0) as room_group_id
+      FROM reserve
+      WHERE room_group_id IN (SELECT id FROM room_group WHERE hotel_id = #{hotel_id})
+       AND EXTRACT(MONTH FROM reserve_date) = #{month} AND status = '취소'
+   </select>
+   <select id="selectRoomReserveDashOfMonth" resultType="com.rm.roaming.dto.RoomGroupDto">
+      SELECT rg.room_group_name, COALESCE(SUM(CASE WHEN res.status = '취소' THEN 0 ELSE res.final_price END), 0) as price,count(res.id) as id
+         FROM room_group rg
+         LEFT JOIN reserve res ON rg.id = res.room_group_id
+                               AND  EXTRACT(MONTH FROM reserve_date) = #{month}
+         WHERE rg.hotel_id = #{hotel_id}
+         GROUP BY rg.room_group_name ORDER BY price desc
+   </select>
+	<select id="selectReserveGraphOfMonth" resultType="com.rm.roaming.dto.ReserveDto">
+	<!-- 	SELECT reserve_date, COALESCE(SUM(final_price), 0) AS final_price
+		FROM (
+		  SELECT CASE WHEN rg.hotel_id =  THEN TRUNC(res.reserve_date) ELSE TO_DATE(#{date}, 'YYYY-MM-DD') END AS reserve_date,
+		         res.final_price
+		  FROM room_group rg
+		  LEFT JOIN reserve res ON rg.id = res.room_group_id AND TRUNC(res.reserve_date) = TO_DATE(, 'YYYY-MM-DD')
+		) subquery
+		GROUP BY reserve_date
+		ORDER BY reserve_date
+		 -->
+		  SELECT 
+		  reserve_date,
+		  COALESCE(SUM(final_price), 0) AS final_price
+		FROM (
+		  SELECT 
+		    TRUNC(res.reserve_date) AS reserve_date,
+		    CASE WHEN rg.hotel_id = #{hotel_id} THEN res.final_price ELSE 0 END AS final_price
+		  FROM room_group rg
+		  LEFT JOIN reserve res ON rg.id = res.room_group_id AND TRUNC(res.reserve_date) = TO_DATE(#{date}, 'YYYY-MM-DD')
+		) subquery
+		GROUP BY reserve_date
+		ORDER BY reserve_date
+	</select>
+	  <select id="selectBarGraphOfYear" resultType="com.rm.roaming.dto.ReserveDto">
+      SELECT   COALESCE(SUM(CASE WHEN res.status = '취소' THEN 0 ELSE res.final_price END), 0)  final_price
+      FROM room_group rg
+      LEFT JOIN reserve res ON rg.id = res.room_group_id
+                            AND  EXTRACT(MONTH FROM reserve_date) = #{month}
+      WHERE rg.hotel_id = #{hotel_id}
+   </select>
+	<update id="updateHotelStatus">
+		UPDATE hotel SET status = '영업' WHERE id= #{hotel_id}
+	</update>
+	
+	<select id="selectReturnDocu" resultType="com.rm.roaming.dto.HotelDocuDto">
+		select * from hotel_docu where hotel_id =#{id}
+	</select>
+	<update id="updateHotelDocu">
+		UPDATE  hotel_docu SET docu_link = #{docu_link},  docu_return = 'null', docu_status = '대기'  WHERE hotel_id = #{hotel_id}
+	</update>
+</mapper>

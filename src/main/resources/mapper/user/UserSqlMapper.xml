@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.roaming.user.mapper.UserSqlMapper">
+
+	<select id="createUserPk" resultType="int">
+		SELECT rm_user_seq.nextval FROM DUAL
+	</select>
+
+
+	<insert id="insertTemp">
+		INSERT INTO user_temperature 
+		VALUES(
+			user_temperature_seq.nextval,
+			#{user_id},
+			36.5,
+			SYSDATE
+		)
+	</insert>
+
+	<!-- 유저 고유ID -->
+	<select id="selectByUserId" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user where id = #{id}
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insertUser">
+		INSERT INTO rm_user VALUES(
+			#{id},
+			#{user_id},
+			#{user_pw},
+			#{user_name},
+			#{gender},
+			#{birth},
+			#{phone_number},
+			<choose>
+				<when test="profile_img == null">
+					NULL,
+				</when>
+				<otherwise>
+				#{profile_img},
+				</otherwise>
+			</choose>
+			#{email},
+			SYSDATE
+		)
+	</insert>
+
+	<!-- 로그인 -->
+	<select id="selectByUserIdAndPw" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user WHERE user_id = #{user_id} AND user_pw = #{user_pw}
+	</select>
+
+	<!-- 유저 user_name -->
+	<select id="selectByUserName" parameterType="String" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user WHERE user_name = #{user_name}
+	</select>
+
+	
+	<!-- 로그인 하면 포인트 획득 -->
+	<insert id="insertLoginPoint">
+		INSERT INTO point VALUES(
+			point_seq.nextval,
+			#{user_id},
+			'500',
+			'획득',
+			'로그인',
+			SYSDATE
+		)
+	</insert>
+	<select id="getLoginCount" resultType="int">
+		SELECT COUNT(*)
+		FROM point
+		WHERE user_id = #{user_id} AND TRUNC(reg_date) = TRUNC(SYSDATE) AND context = '로그인'
+	</select> 
+	<!-- 유저 정보 수정 -->
+	<update id="updateUserInfo">
+		UPDATE rm_user
+			SET user_pw = #{user_pw}, phone_number = #{phone_number}, 
+			profile_img = #{profile_img}, email = #{email}
+			WHERE id = #{id}
+	</update>
+
+	
+	<select id="selectUserIdById" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user WHERE user_id = #{user_id}
+	</select>
+	<select id="selectUserCountByUserId" resultType="int">
+		SELECT count(*) FROM rm_user WHERE user_id = #{user_id}
+	</select>
+	
+	<select id="selectExistUser" resultType="int">
+		SELECT count(*) FROM rm_user where user_id = #{user_id} and user_pw = #{user_pw}
+	</select>
+	
+	
+	<!-- 득균 -->
+	<!-- 유저 중복 체크 -->
+	<select id = "countByUserId" resultType="int">
+		Select count(*) FROM rm_user where user_id = #{userId}
+	</select>
+	
+	
+	
+</mapper>

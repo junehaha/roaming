@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rm.roaming.post.mapper.PostMapper">
+	
+	<select id="createPk" resultType="int">
+		SELECT travel_post_seq.nextval FROM DUAL 
+	</select>
+	
+	<!-- 게시글 등록 -->
+	<insert id="insertPost">
+	    INSERT INTO travel_post
+	    	 VALUES(
+		        #{id},
+		        #{create_id},
+		        #{title},
+		        #{content},
+		        #{going},
+		        #{day_start},
+		        #{day_end},
+		        #{person_count},
+		        #{pay},
+		       	0,
+		       	'r',
+		        SYSDATE
+		    )
+	</insert>
+	
+	<!-- 게시물 업데이트 -->
+	<update id="updatePost">
+		UPDATE travel_post
+	    	 SET
+		       id = #{id},
+		       title = #{title},
+		       content = #{content},
+		       day_start = #{day_start},
+		       day_end = #{day_end},
+		       person_count = #{person_count},
+		       pay = #{pay}
+		     WHERE id = #{id}
+		    
+	</update>
+	
+	<!-- 일정 업데이트 -->
+	<update id="updatePostDays">
+		UPDATE travel_post
+		SET
+			day_start = #{day_start},
+			day_end = #{day_end}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- <select id="selectScheduleByPostId" resultType="com.rm.roaming.dto.ScheduleDto">
+		SELECT * 
+		FROM travel_post_schedule 
+		WHERE
+		 post_id = #{id} ORDER BY id, order_id
+	</select> -->
+	
+	<!-- 파티참가 -->
+	<insert id="insertPartyJoin">
+		INSERT INTO travel_post_joinUser
+		VALUES(
+			travel_post_joinUser_seq.nextval,
+			#{post_id},
+			#{user_id},
+			SYSDATE	
+		)
+	</insert>
+	
+	<!-- 파티참가 status -->
+	<update id="updatePostStatus">
+		UPDATE travel_post_joinConfirm
+		SET
+		status = #{status}
+		WHERE
+		id = #{id}
+	</update>
+		
+	<!-- 파티 참가 리스트 -->
+	<select id="getJoinUserByPostId" resultType="com.rm.roaming.dto.JoinUserDto">
+		SELECT * FROM travel_post_joinUser
+		WHERE
+		post_id = #{id}
+	</select>
+	
+	<!-- 파티원 인원 -->
+	<select id="joinUserCount" resultType="int">
+		SELECT count(*) FROM travel_post_joinUser 
+		WHERE
+		post_id = #{id}
+	</select>
+	
+	<!-- 파티참가 유저 조회 -->
+	<select id="getJoinUserCount" resultType="int">
+		SELECT count(*) FROM travel_post_joinUser
+		WHERE post_id = #{post_id} AND user_id = #{user_id}
+	</select>
+	
+	<!-- 파티 카운트 -->
+	
+	
+	<!-- 참가신청 -->
+	<insert id="insertJoinConfirm">
+		INSERT INTO travel_post_joinConfirm
+		VALUES(
+			travel_post_joinConfirm_seq.nextval,
+			#{post_id},
+			#{create_id},
+			#{user_id},
+			#{welcome_ment},
+			'r',
+			#{confirm_image},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 참가신청 리스틑 조회 -->
+	<select id="selectJoinConfirm" resultType="com.rm.roaming.dto.JoinConfirmDto">
+		SELECT * 
+		FROM travel_post_joinConfirm
+		WHERE
+		create_id = #{create_id} AND STATUS = 'r'
+	</select>
+	
+	<!-- 참가신청 status -->
+	<select id="selectJoinStatus" resultType="com.rm.roaming.dto.JoinConfirmDto">
+		SELECT * 
+		FROM travel_post_joinConfirm
+		WHERE
+		post_id = #{post_id} AND user_id = #{user_id}	
+	</select>
+	
+	<!-- 게시글 가져오기 -->
+	<select id="getPostList" resultType="com.rm.roaming.dto.PostDto">
+	    SELECT t2.* FROM (
+			SELECT rownum rnum, t1.* FROM(
+				SELECT t1.* 
+				FROM travel_post t1
+				INNER JOIN rm_user ru ON t1.create_id = ru.id
+				WHERE 1=1
+				<if test="searchValue != null">
+					AND (
+		                t1.title LIKE '%' || #{searchValue} || '%'
+		                OR t1.content LIKE '%' || #{searchValue} || '%'
+		                OR t1.going LIKE '%' || #{searchValue} || '%'
+		                OR ru.user_name LIKE '%' || #{searchValue} || '%'
+		            )
+				</if>
+				<if test="category != null and category == '최신 순'">
+		            ORDER BY t1.reg_date DESC, t1.id DESC
+		        </if>
+		        <if test="category != null and category == '인기 순'">
+		            ORDER BY t1.hit DESC, t1.id DESC
+		        </if>
+		        <if test="category != null and category == '댓글 순'">
+		            ORDER BY t1.id DESC
+		        </if>
+		        <if test="searchValue == null and category == null">
+		            ORDER BY t1.id DESC
+		        </if>
+				)t1
+			)t2
+		<![CDATA[
+		WHERE t2.rnum >= ((#{page}-1) * 12) +1 AND t2.rnum <= #{page} * 12
+		]]>
+	</select>
+	
+	<!-- 글 개수 가져오기 -->
+	<select id="getPostCount" resultType="int">
+		SELECT count(*) FROM travel_post
+	</select>
+	
+	<!-- 게시글 id로 가져오기 -->
+	<select id="getPostById" resultType="com.rm.roaming.dto.PostDto">
+		SELECT *
+		FROM travel_post
+		WHERE
+			id = #{id} 
+	</select>
+	
+	<!-- 유저 정보 가져오기 -->
+	<select id="getUserById" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * 
+		FROM rm_user 
+		WHERE
+			id = #{userId}
+	</select>
+	
+	<!-- 게시글 작성자 정보 가져오기 -->
+	<select id="getPostByCreateId" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * 
+		FROM rm_user 
+		WHERE
+			id = #{create_id}
+	</select>
+	
+	<!-- 이미지 등록 -->
+	<insert id="insertPostImage">
+		INSERT INTO travel_post_image 
+		VALUES(
+			travel_post_image_seq.nextval,
+			#{post_id},
+			#{post_image},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 게시글 조회수 증가 -->
+	<update id="viewsUpdate">
+		UPDATE travel_post
+		SET
+			hit = hit + 1 WHERE id = #{id}
+	</update>
+	
+	<!-- postId로 이미지 가져오기 -->
+	<select id="getPostImageByPostId" resultType="com.rm.roaming.dto.PostImageDto">
+		SELECT * 
+		FROM travel_post_image 
+		WHERE
+			post_id = #{postId}
+	</select>
+	
+	<!-- 게시물 신고하기 -->
+	<insert id="insertReport">
+		INSERT INTO travel_post_report
+		VALUES(
+			travel_post_report_seq.nextval,
+			#{post_id},
+			#{user_id},
+			#{title},
+			#{content},
+			#{image},
+			SYSDATE
+		)
+	</insert>
+	
+	
+	<!-- 게시물 댓글 작성하기 -->
+	<insert id="insertPostComment">
+		INSERT INTO travel_post_comment
+		VALUES(
+			travel_post_comment_seq.nextval,
+			#{post_id},
+			#{user_id},
+			#{post_comment},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 게시물 댓글 수정 -->
+	<update id="commentModify">
+		UPDATE travel_post_comment
+		SET post_comment = #{post_comment}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 게시물 댓글 삭제 -->
+	<delete id="commentDelete">
+		DELETE travel_post_comment
+		WHERE id = #{commentId} 
+	</delete>
+	
+	<!-- 게시물 대댓글 수정 -->
+	<update id="reCommentModify">
+		UPDATE travel_post_re_comment
+		SET re_comment = #{re_comment}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 게시물 대댓글 삭제 -->
+	<delete id="reCommentDelete">
+		DELETE travel_post_re_comment
+		WHERE id = #{reCommentId} 
+	</delete>
+	
+	<!-- 게시물 대댓글 작성하기 -->
+	<insert id="insertPostReComment">
+		INSERT INTO travel_post_re_comment
+		VALUES(
+			travel_post_re_comment_seq.nextval,
+			#{comment_id},
+			#{user_id},
+			#{re_user_id},
+			#{re_comment},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 게시물 댓글 가져오기 -->
+	<select id="getPostComment" resultType="com.rm.roaming.dto.CommentDto">
+		SELECT *
+		FROM travel_post_comment
+		WHERE post_id = #{postId}
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 게시물 리댓글 가져오기 -->
+	<select id="getPostReComment" resultType="com.rm.roaming.dto.ReCommentDto">
+		SELECT *
+		FROM travel_post_re_comment
+		WHERE comment_id = #{commentId}
+		ORDER BY id
+	</select>
+	
+	<select id="getPostCommentTotalCount" resultType="int">
+		SELECT
+		t1 + t2 total_count
+		FROM (
+			SELECT 
+			(SELECT count(*) FROM travel_post_comment WHERE post_id = #{postId}) t1, 
+			(SELECT count(*) FROM travel_post_re_comment WHERE comment_id IN(SELECT id FROM travel_post_comment WHERE post_id = #{postId})) t2
+			 FROM  dual
+			)
+	</select>
+	
+	<!-- 게시물 좋아요 -->
+	<insert id="insertLike">
+		INSERT INTO travel_post_like
+			VALUES(
+				travel_post_like_seq.nextval,
+				#{post_id},
+				#{user_id},
+				SYSDATE
+			)
+	</insert>
+	
+	<delete id="deleteLike">
+		DELETE travel_post_like
+		WHERE post_id = #{post_id} AND user_id = #{user_id}
+	</delete>
+	
+	<select id="getLikeCount" resultType="int">
+		SELECT count(*) FROM travel_post_like
+		WHERE post_id = #{post_id} AND user_id = #{user_id}
+	</select>
+	
+	<select id="getLikeTotalCount" resultType="int">
+		SELECT count(*) FROM travel_post_like
+		WHERE post_id = #{postId}
+	</select>
+	
+	<!-- 댓글 좋아요 -->
+	<insert id="insertCommentLike">
+		INSERT INTO travel_comment_like
+			VALUES(
+				travel_comment_like_seq.nextval,
+				#{comment_id},
+				#{user_id},
+				SYSDATE
+			)
+	</insert>
+	
+	<delete id="deleteCommentLike">
+		DELETE travel_comment_like
+		WHERE comment_id = #{comment_id} AND user_id = #{user_id}
+	</delete>
+	
+	<select id="getCommentLikeCount" resultType="int">
+		SELECT count(*) FROM travel_comment_like
+		WHERE comment_id = #{comment_id} AND user_id = #{user_id}
+	</select>
+	
+	<select id="getCommentLikeTotalCount" resultType="int">
+		SELECT count(*) FROM travel_comment_like
+		WHERE comment_id = #{commentId}
+	</select>
+	
+	<!-- 대댓글 좋아요 -->
+	<insert id="insertReCommentLike">
+		INSERT INTO travel_recomment_like
+			VALUES(
+				travel_recomment_like_seq.nextval,
+				#{recomment_id},
+				#{user_id},
+				SYSDATE
+			)
+	</insert>
+	
+	<delete id="deleteReCommentLike">
+		DELETE travel_recomment_like
+		WHERE recomment_id = #{recomment_id} AND user_id = #{user_id}
+	</delete>
+	
+	<select id="getReCommentLikeCount" resultType="int">
+		SELECT count(*) FROM travel_recomment_like
+		WHERE recomment_id = #{recomment_id} AND user_id = #{user_id}
+	</select>
+	
+	<select id="getReCommentLikeTotalCount" resultType="int">
+		SELECT count(*) FROM travel_recomment_like
+		WHERE recomment_id = #{recommentId}
+	</select>
+	
+	
+	<insert id="insertBoard">
+		INSERT INTO travel_post_board
+		VALUES(
+			travel_post_board_seq.nextval,
+			#{post_id},
+			#{user_id},
+			#{title},
+			#{content},
+			0,
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- <select id="selectBoardList" resultType="com.rm.roaming.dto.PartyBoardDto">
+		SELECT t2.* FROM
+			(SELECT rownum rnum, t1.* FROM (SELECT tb.* FROM travel_post_board tb WHERE post_id = #{post_id})
+			t1)	t2
+			<![CDATA[
+			WHERE t2.rnum >= ((#{pageNum}-1) * 10) +1 AND t2.rnum <= #{pageNum} * 10;
+			]]> 
+	</select> -->
+	
+	<select id="selectBoardList" resultType="com.rm.roaming.dto.PartyBoardDto">
+		SELECT * FROM
+		travel_post_board where post_id = #{post_id} ORDER BY id DESC
+		
+			
+	</select>
+	
+	
+	<select id="selectBoardById" resultType="com.rm.roaming.dto.PartyBoardDto">
+		SELECT * FROM travel_post_board WHERE id = #{board_id}
+	</select>
+	
+	<delete id="deleteBoardById">
+		DELETE travel_post_board WHERE id = #{id}
+	</delete>
+
+	<update id="updateBoardById">
+		UPDATE travel_post_board SET title = #{title}, content = #{content} WHERE id = #{id}
+	</update>	
+	
+	<update id="boardViewsUpdate">
+		UPDATE travel_post_board
+		SET
+			hit = hit + 1 WHERE id = #{id}
+	</update>
+	
+	
+	
+	
+	
+	<!-- New 일차추가 -->
+	<insert id="insertNewDay">
+    INSERT INTO travel_post_day (id, post_id, todayDate, trip_day, reg_date)
+    VALUES (
+        travel_post_day_seq.nextval,
+        #{post_id},
+        #{todayDate},
+        (SELECT NVL(MAX(trip_day), 0) + 1 FROM travel_post_day WHERE post_id = #{post_id}),
+        SYSDATE
+    )
+	</insert>
+
+	<!-- 일차가져오기 -->
+	<select id="selectNewDay" resultType="com.rm.roaming.dto.DayDto">
+		SELECT * FROM travel_post_day WHERE post_id = #{postId}
+	</select>
+	
+	<insert id="insertSchedule">
+		INSERT INTO travel_post_schedule 
+			VALUES(
+			travel_post_schedule_seq.nextval,
+			#{day_id},
+			#{index},
+			#{name},
+			#{address},
+			#{timeInput},
+			#{memoInput},
+			SYSDATE
+		)
+	</insert>
+	
+	<select id="getScheduleList" resultType="com.rm.roaming.dto.SchedulerDto">
+		SELECT * FROM travel_post_schedule WHERE day_id = #{day_id}
+	</select>
+
+	<!-- 일차 삭제 -->
+	<delete id="deleteNewDays">
+		DELETE travel_post_day WHERE id = #{id}	
+	</delete>
+	
+
+	<!-- 스케줄 삭제 -->
+	<delete id="deleteSchedules">
+		DELETE travel_post_schedule WHERE day_id = #{day_id}		
+	</delete>
+
+
+	<!-- 스케줄 생성했는지 확인 post_id -->
+	<select id="getScheduleCount" resultType="int">
+		SELECT count(*) FROM travel_post_schedule WHERE day_id IN (SELECT id FROM travel_post_day WHERE post_id = #{post_id})
+	</select>
+	
+	<!-- 채팅방 구현 -->
+	
+	<!-- 그룹채팅 PK -->
+	<select id="getGroupChatPk" resultType="int">
+		SELECT travel_post_chat_seq.nextval FROM DUAL 
+	</select>
+	
+	
+	<insert id="insertPartyChating">
+		INSERT INTO travel_post_chat VALUES(
+		#{id},
+		#{post_id},
+		#{user_id},
+		#{chating},
+		SYSDATE
+	)
+	</insert>
+	
+	<!-- 그룹채팅 인원 가져오기 -->
+	<select id="getGroupUserIdList" resultType="com.rm.roaming.dto.JoinUserDto">
+		SELECT * FROM travel_post_joinUser WHERE post_id = #{post_id}
+	</select>
+	
+	<!-- 그룹채팅 status insert -->
+	<insert id="insertGroupStatus">
+		INSERT INTO travel_post_chat_status
+		VALUES(
+			travel_post_chat_status_seq.nextval,
+			#{chating_id},
+			#{user_id},
+			#{status},
+			SYSDATE
+		) 
+	</insert>
+	
+	<select id="getChatJoinUserPostId" resultType="com.rm.roaming.dto.UserDto">
+		SELECT ru.* 
+		FROM travel_post_joinUser t1
+			INNER JOIN rm_user ru ON t1.user_id = ru.id
+		WHERE post_id = #{id}
+	</select>
+	
+	<!-- 채팅 안읽음 카운트 -->
+	<select id="getGroupChatCount" resultType="int">
+		SELECT count(*) FROM travel_post_chat t1  
+		INNER JOIN travel_post_chat_status t2
+		ON t1.id = t2.chating_id
+		WHERE chating_id = #{chating_id} AND t2.status = '안읽음'
+	</select>
+	
+	<!-- 그룹 안읽은 채팅 카운트 -->
+	<select id="getGroupNotReadCount" resultType="int">
+		SELECT count(*) FROM travel_post_chat t1
+		INNER JOIN travel_post_chat_status t2
+		ON t1.id = t2.chating_id
+		WHERE t1.post_id = #{post_id} AND t2.user_id = #{user_id} AND t2.status = '안읽음'
+	</select>
+	
+	<!-- 그룹 채팅 읽음 처리 업데이트 -->
+	<update id="updateGroupStatus">
+		UPDATE travel_post_chat_status
+		SET status = '읽음'
+		WHERE chating_id IN (
+		    SELECT t2.chating_id
+		    FROM travel_post_chat t1
+		    INNER JOIN travel_post_chat_status t2
+		    ON t1.id = t2.chating_id
+		    WHERE t1.post_id = #{post_id} AND t2.user_id = #{user_id}
+		)
+		 AND user_id = #{user_id}
+	</update>
+	<!-- 최신 채팅, 시간 가져오기 -->
+	<select id="getRecentChatingByPostId" resultType="com.rm.roaming.dto.PostChatDto">
+		SELECT chating, reg_date 
+		FROM travel_post_chat 
+		WHERE post_id = #{post_id}
+		AND id = (SELECT max(id) FROM travel_post_chat WHERE post_id = #{post_id})
+	</select>
+	
+	<!-- 파티 그룹 리스트 -->
+	<select id="getPartyGroupList" resultType="com.rm.roaming.dto.PostChatGroupDto">
+		SELECT t1.id join_id, t1.post_id, t2.title, t2.create_id create_id, ru.profile_img
+		FROM travel_post_joinUser t1
+		INNER JOIN travel_post t2 ON t1.post_id = t2.id
+		INNER JOIN rm_user ru ON t2.create_id = ru.id
+		WHERE t1.user_id = #{user_id} 
+		ORDER BY t1.id desc
+	</select>
+	
+	<!-- 그룹 채팅방 인원 카운트 -->
+	<select id="getGroupPartyRoomCount" resultType="int">
+		SELECT count(*)
+		FROM travel_post_joinUser
+		WHERE post_id = #{post_id}
+	</select>
+	
+	<!-- 채팅방 가져오기 -->
+	<select id="getChatList" resultType="com.rm.roaming.dto.PostChatDto">
+		SELECT * FROM travel_post_chat
+		WHERE post_id = #{post_id}
+		ORDER BY id
+	</select>
+	
+	<!-- 1:1 채팅방 인서트 -->
+	<insert id="insertOneChat">
+		INSERT INTO travel_chatRoom
+		VALUES(
+			travel_chatRoom_seq.nextval,
+			#{send_id},
+			#{receive_id},
+			SYSDATE
+		)
+	</insert>
+	
+	<select id="getChatRoomList" resultType="com.rm.roaming.dto.ChatRoomDto">
+		SELECT *
+		FROM travel_chatRoom
+		WHERE send_id = #{user_id}
+		OR receive_id = #{user_id}
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 1:1 하나의 pk로 채팅방 가져오기 -->
+	<select id="chatOneRoomPK" resultType="com.rm.roaming.dto.ChatRoomDto">
+		SELECT * FROM travel_chatRoom WHERE id = #{id}
+	</select>
+	
+	<select id="chatRoomCheck" resultType="com.rm.roaming.dto.ChatRoomDto">
+		SELECT * FROM travel_chatRoom 
+		WHERE (send_id = #{send_id} AND receive_id = #{receive_id}) 
+		OR (send_id = #{receive_id} AND receive_id = #{send_id})
+	</select>
+	
+	<!-- 1:1 읽음 안읽음 인서트 -->
+	<insert id="insertOneStatus">
+		INSERT INTO travel_chat_status
+		values(
+			travel_chat_status_seq.nextval,
+			#{chating_id},
+			#{user_id},
+			#{status},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 1:1 안읽음 개수 가져오기 -->
+	<select id="getOneChatingNotReadCount" resultType="int">
+		SELECT count(*) FROM travel_chat t1 
+		LEFT JOIN travel_chat_status t2
+		ON t1.id = t2.chating_id
+		WHERE t1.chat_id = #{chat_id} AND t2.user_id = #{user_id} AND t2.status = '안읽음'
+	</select>
+	
+	<!-- 1:1 읽음처리 업데이트 -->
+	<insert id="updateOneStatus">
+		UPDATE travel_chat_status SET status = #{status} 
+		WHERE user_id = #{user_id}  
+	</insert>
+	
+	<!-- 1:1 최신 채팅, 시간 가져오기 -->
+	<select id="getRecentChatingBy" resultType="com.rm.roaming.dto.ChatDto">
+		SELECT chating, reg_date 
+		FROM travel_chat 
+		WHERE chat_id = #{chat_id}
+		AND id = (SELECT max(id) FROM travel_chat WHERE chat_id = #{chat_id})
+	</select>
+	
+	<!-- 1:1 채팅 가져오기 -->
+	<select id="getOneChatList" resultType="com.rm.roaming.dto.ChatDto">
+		SELECT * 
+		FROM travel_chat
+		WHERE chat_id = #{chat_id}
+		ORDER BY id
+	</select>
+	
+	<!-- 1:1 채팅 pk -->
+	<select id="chatingPk" resultType="int">
+		SELECT travel_chat_seq.nextval FROM DUAL
+	</select>
+	
+	<!-- 1:1 채팅 인서트  -->
+	<insert id="insertChating">
+		INSERT INTO travel_chat
+		VALUES(
+			#{id},
+			#{chat_id},
+			#{user_id},
+			#{chating},
+			'1',
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 1:1 채팅 read_count 업데이트 -->
+	<update id="updateOneReadCount">
+		UPDATE travel_chat SET read_count = read_count - 1
+		WHERE chat_id = #{chat_id}
+	</update>
+	
+	<select id="getOneStatusCount" resultType="int">
+		SELECT count(*) FROM travel_chat_status WHERE chating_id = #{id} AND status = '안읽음'
+	</select>
+	
+	
+	<!-- 프로필 모달 -->
+	
+	<!-- 온도테이블 -->
+	<select id="getTemperature" resultType="com.rm.roaming.dto.TemperatureDto">
+		SELECT * FROM user_temperature WHERE user_id = #{userId}
+	</select>
+	
+	<!-- 리뷰리스트 -->
+	<select id="getReviewList" resultType="com.rm.roaming.dto.PostReviewDto">
+		SELECT * FROM travel_post_review WHERE receive_id = #{userId} 
+	</select>
+	
+	<!-- 리뷰 총 카운트 -->
+	<select id="getReviewCount" resultType="int">
+		SELECT count(*) FROM travel_post_review WHERE receive_id = #{userId}	
+	</select>
+	
+	
+	<!-- myPage -->
+	<!-- 진행 여행 -->
+	<select id="getIngPostList" resultType="com.rm.roaming.dto.PostDto">
+		SELECT t1.* FROM travel_post t1
+		INNER JOIN travel_post_joinUser t2
+		ON t1.id = t2.post_id
+		<![CDATA[
+		WHERE t1.day_end >= sysdate AND t2.user_id = #{userId}
+		]]>
+		ORDER BY t1.id DESC
+	</select>
+	
+	<!-- 지난 여행 -->
+	<select id="getPastPostList" resultType="com.rm.roaming.dto.PostDto">
+		SELECT t1.* FROM travel_post t1
+		INNER JOIN travel_post_joinUser t2
+		ON t1.id = t2.post_id
+		<![CDATA[
+		WHERE t1.day_end < sysdate AND t2.user_id = #{userId}
+		]]>
+		ORDER BY t1.reg_date DESC	
+	</select>
+	
+	<!-- 리뷰 등록 여부 -->
+	<select id="getReviewPostUserList"  resultType="com.rm.roaming.dto.PostReviewDto">
+		SELECT * FROM travel_post_review
+		WHERE post_id = #{postId} AND send_id = #{userId}
+	</select>
+	
+	<!-- 리뷰 등록 -->
+	<insert id="insertPostReview">
+		INSERT INTO travel_post_review 
+		VALUES(
+			travel_post_review_seq.nextval,
+			#{post_id},
+			#{send_id},
+			#{receive_id},
+			#{rating},
+			#{content},
+			SYSDATE
+		)
+	</insert>
+	
+	<!-- 회원 리뷰등록 후 업데이트 -->
+	<update id="updatePostReviewUserInfo">
+		UPDATE user_temperature
+		SET score = 
+		CASE
+		<![CDATA[ 
+		    WHEN #{rating} >= 1 AND #{rating} <= 3 THEN score - (#{rating} * 0.2)
+		    WHEN #{rating} > 3 THEN score + (#{rating} * 0.1)
+		]]>
+		END,
+		reg_date = SYSDATE
+		WHERE user_id = #{receive_id}
+	</update>
+	
+	<!-- 파티원 리뷰 카운트 -->
+	<select id="getPostMyReviewCount" resultType="int">
+		SELECT count(*) FROM travel_post_review WHERE post_id = #{postId} AND send_id = #{userId}	
+	</select>
+	
+	
+	<!-- 황준하 테스트 -->
+	<insert id="insertPostSchedule">
+		INSERT INTO test_post_schedule VALUES(
+			test_post_schedule_seq.nextval,
+			#{day_id},
+			#{order_no},
+			#{place_title},
+			#{place_location},
+			#{estimated_time},	    
+			#{trip_memo},
+			SYSDATE
+		)
+	</insert>
+	
+	
+</mapper>

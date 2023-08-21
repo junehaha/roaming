@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rm.roaming.admincsboard.mapper.AdminCsSqlMapper">
+	
+	<!-- 공지사항 crud -->
+	<select id="selectAllCsNotice" resultType="com.rm.roaming.dto.CsNoticeDto">
+		select * from cs_notice order by id desc
+	</select>
+	
+	<select id="selectCsNoticeById" resultType="com.rm.roaming.dto.CsNoticeDto">
+		select * from cs_notice where id = #{id}
+	</select>
+	
+	<insert id="insertCsNotice">
+		insert into cs_notice values(
+			cs_notice_seq.nextval,
+			#{admin_id},
+			#{notice_title},
+			#{notice_content},
+			0,
+			sysdate
+		)
+	</insert>
+	
+	<update id="updateCsNotice">
+		update cs_notice
+		set notice_title = #{notice_title}, notice_content = #{notice_content}
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteCsNotice">
+		delete from cs_notice where id = #{id}
+	</delete>
+	
+	<update id="increaseNoticeReadCount">
+		update cs_notice
+		set notice_read_count = notice_read_count + 1 
+		where id = #{id}
+	</update>
+	
+	<!-- 메인페이지용 공지사항 목록조회 -->
+	<select id="getMainCsNotice" resultType="com.rm.roaming.dto.CsNoticeDto">
+		SELECT id, notice_title, REG_DATE
+		FROM (
+		    SELECT cn.*, ROWNUM rn
+		    FROM (
+		        SELECT * FROM cs_notice
+		        ORDER BY id DESC
+		    ) cn
+		) cn2
+		<![CDATA[
+		WHERE rn <= 4 ]]>
+	</select>
+	
+	<!-- 자주묻는질문 faq CRUD -->
+	
+	<insert id="insertFaq">
+		insert into faq values(
+		faq_seq.nextval,
+		#{admin_id},
+		#{faq_category_id},
+		#{faq_title},
+		#{faq_content},
+		sysdate
+		)
+	</insert>
+	
+	<select id="selectFaqByCategoryId" resultType="com.rm.roaming.dto.FaqDto">
+		select * from faq where faq_category_id = #{faq_category_id}
+	</select>
+	
+	<select id="selectAllFaq" resultType="com.rm.roaming.dto.FaqDto">
+		select * from faq order by id desc
+	</select>
+	
+	<select id="selectFaqById" resultType="com.rm.roaming.dto.FaqDto">
+		select * from faq where id = #{id}
+	</select>
+	
+	<!-- faq카테고리 crud -->
+	<select id = "selectFaqCategory" resultType="com.rm.roaming.dto.FaqCategoryDto">
+		select * from faq_category
+	</select>
+	
+	<select id = "selectFaqCategoryById" resultType="com.rm.roaming.dto.FaqCategoryDto">
+		select * from faq_category where id = #{id}
+	</select>
+	
+	<delete id = "deleteFaq">
+		delete from faq where id = #{id}
+	</delete>
+	
+	<select id="selectAdminById" resultType="com.rm.roaming.dto.AdminDto">
+		select * from admin where id= #{id}
+	</select>
+
+	
+	<update id="updateQaBoardAdminById">
+		update qa_board set admin_id=#{admin_id}, qa_comment_content=#{qa_comment_content}, 
+			qa_comment_reg_date= sysdate
+		where id = #{id}
+	</update>
+	
+	<select id="selectAdminQaBoardProgress" resultType="com.rm.roaming.dto.QaBoardDto">
+		select prog2.* from(
+    		select prog1.*, rownum rnum from (
+       			 select prog.* from qa_board prog
+       			 where qa_comment_content is null
+        		order by id desc
+   			) prog1
+		) prog2
+		<![CDATA[
+		where prog2.rnum >=((#{page}-1)*5) + 1 and prog2.rnum <= #{page}*5
+		]]>
+	</select>
+	
+	<select id="getProgressCount" resultType="int">
+		select count(*) from qa_board where qa_comment_content is null
+	</select>
+	
+	<select id="selectAdminQaBoardComplete" resultType="com.rm.roaming.dto.QaBoardDto">
+		select comp2.* from(
+		    select comp1.*, rownum rnum from (
+		        select comp.* from qa_board comp
+		        where qa_comment_content is not null
+		       	order by id desc
+		    ) comp1
+		) comp2
+		<![CDATA[
+		where comp2.rnum >= ((#{page}-1)*5) + 1 and comp2.rnum <= #{page}*5
+		]]>
+	</select>
+	
+	<select id="getCompleteCount" resultType="int">
+		select count(*) from qa_board where qa_comment_content is not null
+	</select>
+	
+	
+	
+</mapper>

@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.roaming.facebook.mapper.FacebookSqlMapper">
+	<select id="createPk" resultType="int">
+		select feed_seq.nextval from dual
+	</select>
+	<insert id="insertFeed">
+		insert into feed values(
+			#{id},
+			#{user_id},
+			#{feed_title},
+			#{feed_content},
+			'N',
+			#{location},
+			sysdate
+		)
+	</insert>
+	<insert id="insertFeedImage">
+		insert into feed_image values(
+			feed_image_seq.nextval,
+			#{feed_id},
+			#{feed_image}
+		)
+	</insert>
+	<select id="selectFeedMainImage" resultType="com.rm.roaming.dto.FeedImageDto">
+		SELECT * FROM feed_image WHERE (feed_id, id) in(
+			SELECT feed_id, min(id) FROM feed_image GROUP BY feed_id) order by id desc
+	</select>
+	<select id="selectFeedMainTitle" resultType="com.rm.roaming.dto.FeedDto">
+		select * from feed where id = #{feedId} order by id desc
+	</select>
+	<select id="selectFeedDetailMain" resultType="com.rm.roaming.dto.FeedImageDto">
+		select * from feed_image where (feed_id, id)
+		in(select feed_id, min(id) from feed_image WHERE feed_id = #{id} group by feed_id)
+	</select>
+	<select id="selectFeedImgAll" resultType="com.rm.roaming.dto.FeedImageDto">
+		select * from feed_image where feed_id = #{id}
+	</select>
+	<select id="selectFeedDetailContent" resultType="com.rm.roaming.dto.FeedDto">
+		select * from feed where id = #{id}
+	</select>
+	<select id="selectFeedDetailInfo" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = (
+		select user_id from feed where id = #{id})
+	</select>
+	<insert id="insertFeedComment">
+		insert into feed_comment values(
+			feed_comment_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			#{user_comment_id},
+			#{feed_comment},
+			sysdate
+		)
+	</insert>
+	<select id="selectFeedComment" resultType="com.rm.roaming.dto.FeedCommentDto">
+		select * from feed_comment where feed_id = #{id}
+	</select>
+	<select id="selectFeedCommentUser" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user u INNER JOIN feed_comment fc ON u.id = fc.user_comment_id
+			WHERE feed_id = #{id}
+	</select>
+	<insert id="insertFeedLikes">
+		insert into feed_likes values(
+			feed_likes_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			1,
+			1,
+			sysdate
+		)
+	</insert>
+	<update id="feedLikesUp">
+		update feed_likes set feed_count = feed_count + 1 where user_id = #{id} and category_id = 1
+	</update>
+	<update id="feedLikesDown">
+		update feed_likes set feed_count = feed_count - 1 where user_id = #{id} and category_id = 1
+	</update>
+	<select id="feedLikesGo" resultType="com.rm.roaming.dto.FeedLikesDto">
+		select * from feed_likes where user_id = #{id} and category_id = 1
+	</select>
+	<select id="feedLikesCount" resultType="int">
+		select feed_count from feed_likes where user_id = #{id} and category_id = 1
+	</select>
+	<select id="feedLikesShow" resultType="int">
+		select count(feed_count) from feed_likes where feed_count = 1 and category_id = 1
+	</select>
+	<select id="feedLikesAll" resultType="int">
+		select count(feed_count) from feed_likes where feed_count = 1 and category_id = 1 and feed_id = #{id}
+	</select>
+	<insert id="insertFeedHates">
+		insert into feed_likes values(
+			feed_likes_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			2,
+			1,
+			sysdate
+		)
+	</insert>
+	<update id="feedHatesUp">
+		update feed_likes set feed_count = feed_count + 1 where user_id = #{id} and category_id = 2
+	</update>
+	<update id="feedHatesDown">
+		update feed_likes set feed_count = feed_count - 1 where user_id = #{id} and category_id = 2
+	</update>
+	<select id="feedHatesGo" resultType="com.rm.roaming.dto.FeedLikesDto">
+		select * from feed_likes where user_id = #{id} and category_id = 2
+	</select>
+	<select id="feedHatesCount" resultType="int">
+		select feed_count from feed_likes where user_id = #{id} and category_id = 2
+	</select>
+	<select id="feedHatesShow" resultType="int">
+		select count(feed_count) from feed_likes where feed_count = 1 and category_id = 2
+	</select>
+	<!-- 릴스 시작 -->
+	<insert id="insertReels">
+		insert into reels values(
+			reels_seq.nextval,
+			#{user_id},
+			#{reels_content},
+			#{reels_video},
+			sysdate
+		)
+	</insert>
+	<select id="selectReels" resultType="com.rm.roaming.dto.ReelsDto">
+		select * from reels order by id desc
+	</select>
+	<select id="selectReelsUser" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{userId}
+	</select>
+	<update id="updateUserImg">
+		update rm_user set profile_img = #{profile_img} where id = #{id}
+	</update>
+	<select id="selectUserImgDefault" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{userId}
+	</select>
+	<select id="selectMyFeedCount" resultType="int">
+		select count(*) from feed where user_id = #{userId}
+	</select>
+	<select id="selectMyFeed" resultType="com.rm.roaming.dto.FeedImageDto">
+		SELECT * FROM feed f INNER JOIN feed_image fi ON f.id = fi.feed_id WHERE user_id = #{userId} AND (fi.feed_id, fi.id)
+		IN(SELECT feed_id, min(id) FROM feed_image GROUP BY feed_id) ORDER BY fi.id desc
+	</select>
+	<select id="selectMyFeedId" resultType="com.rm.roaming.dto.FeedDto">
+		select * from feed where user_id = #{userId} order by id desc
+	</select>
+	<select id="selectReelsUserInfo" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{userId}
+	</select>
+	<select id="selectFeedDate" resultType="String">
+		SELECT
+		    CASE
+		        WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) THEN '오늘'
+		        WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) - 1 THEN '1일 전'
+		        WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 7 THEN FLOOR(TRUNC(SYSDATE) - TRUNC(r.reg_date)) || '주 전'
+		        WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 30 THEN FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 7) || '주 전'
+		        ELSE FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 30) || '개월 전'
+		    END AS reg_date 
+		FROM rm_user u 
+		INNER JOIN feed r ON u.id = r.user_id
+		WHERE r.id = #{feedId}
+		ORDER BY r.id DESC
+	</select>
+	<select id="selectReelsDate" resultType="String">
+		SELECT
+		    CASE
+		        WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) THEN '오늘'
+		        WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) - 1 THEN '1일 전'
+		        WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 7 THEN FLOOR(TRUNC(SYSDATE) - TRUNC(r.reg_date)) || '주 전'
+		        WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 30 THEN FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 7) || '주 전'
+		        ELSE FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 30) || '개월 전'
+		    END AS reg_date 
+		FROM rm_user u 
+		INNER JOIN reels r ON u.id = r.user_id
+		WHERE r.id = #{reelsId}
+		ORDER BY r.id DESC
+	</select>
+	<select id="selectProfile" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{userId}
+	</select>
+	<!-- js start -->
+	<insert id="insertFeedLike">
+		insert into feed_likes values(
+			feed_likes_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			1,
+			1,
+			sysdate
+		)
+	</insert>
+	<insert id="insertReelsLike">
+		insert into reels_likes values(
+			reels_likes_seq.nextval,
+			#{reels_id},
+			#{user_id},
+			sysdate
+		)
+	</insert>
+	<delete id="deleteReelsLike">
+		delete from reels_likes
+		where reels_id = #{reels_id}
+		and user_id = #{user_id}
+	</delete>
+	<delete id="deleteFeedLike">
+		delete from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+	</delete>
+	<select id="countMyReelsLike" resultType="int">
+		select count(*) from reels_likes
+		where reels_id = #{reels_id}
+		and user_id = #{user_id}
+	</select>
+	<select id="countMyFeedLike" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+	</select>
+	<insert id="insertFeedHate">
+		insert into feed_likes values(
+			feed_likes_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			2,
+			1,
+			sysdate
+		)
+	</insert>
+	<insert id="insertReelsComment">
+		insert into reels_comment values(
+			reels_comment_seq.nextval,
+			#{reels_id},
+			null,
+			#{user_comment_id},
+			#{reels_comment},
+			sysdate
+		)	
+	</insert>
+	<insert id="insertFeedCommentMain">
+		insert into feed_comment values(
+			feed_comment_seq.nextval,
+			#{feed_id},
+			null,
+			#{user_comment_id},
+			#{feed_comment},
+			sysdate
+		)
+	</insert>
+	<select id="selectReelsCommentCount" resultType="int">
+		select count(*) from reels_comment where reels_id = #{reelsId}
+	</select>
+	<select id="selectFeedCommentCount" resultType="int">
+		select count(*) from feed_comment where feed_id = #{feedId}
+	</select>
+	<select id="reelsModalUser" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user WHERE id in (SELECT user_comment_id FROM reels_comment WHERE reels_id = #{reels_id} AND user_comment_id = #{user_comment_id})
+	</select>
+	<select id="feedModalUser" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user WHERE id in (SELECT user_comment_id FROM feed_comment WHERE feed_id = #{feed_id} AND user_comment_id = #{user_comment_id})
+	</select>
+	<select id="reelsModalComment" resultType="com.rm.roaming.dto.ReelsCommentDto">
+		SELECT * FROM reels_comment where reels_id = #{reels_id} ORDER BY id desc
+	</select>
+	<select id="feedModalComment" resultType="com.rm.roaming.dto.FeedCommentDto">
+		SELECT * FROM feed_comment where feed_id = #{feed_id} ORDER BY id desc
+	</select>
+	<select id="selectMyReelsCo" resultType="com.rm.roaming.dto.ReelsCommentDto">
+		SELECT * FROM reels_comment WHERE reels_id = #{reels_id} AND user_comment_id = #{user_comment_id} order by id desc
+	</select>
+	<select id="countReelsTotal" resultType="int">
+		select count(*) from reels_likes
+		where reels_id = #{reels_id}
+	</select>
+	<select id="countFeedTotal" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feed_id}
+	</select>
+	<delete id="deleteLike">
+		delete from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+		and category_id = 1
+	</delete>
+	<delete id="deleteHate">
+		delete from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+		and category_id = 2
+	</delete>
+
+	<select id="countMyLike" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+		and category_id = 1
+	</select>
+	<select id="countMyHate" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+		and category_id = 2
+	</select>
+	<select id="countMyTotal" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feed_id}
+		and user_id = #{user_id}
+	</select>
+	<select id="countLikeByUserId" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feedId} and category_id = 1
+	</select>
+	<select id="countHateByUserId" resultType="int">
+		select count(*) from feed_likes
+		where feed_id = #{feedId} and category_id = 2
+	</select>
+
+	<select id="selectHomeImages" resultType="com.rm.roaming.dto.FeedImageDto">
+		select * from feed_image where feed_id = #{feedId} order by id
+	</select>
+	<insert id="insertComment">
+		insert into feed_comment values(
+			feed_comment_seq.nextval,
+			#{feed_id},
+			#{user_id},
+			#{user_comment_id},
+			#{feed_comment},
+			sysdate
+		)
+	</insert>
+	<delete id="deleteComment">
+		delete from feed_comment where id = #{id}
+	</delete>
+	<update id="updateComment">
+		update feed_comment set feed_comment = #{feed_comment}
+		where id = #{id}
+	</update>
+	<select id="selectCommentAll" resultType="com.rm.roaming.dto.FeedCommentDto">
+		select * from feed_comment where feed_id = #{feedId }
+		order by id desc
+	</select>
+	<select id="selectById" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{id}
+	</select>
+	<update id="updateById">
+		update rm_user set user_id = #{id} where id = #{id}
+	</update>
+	<!-- reels 아작스로 뽑아보기 -->
+	<select id="getReelsList" resultType="com.rm.roaming.dto.ReelsDto">
+		select * from reels order by id desc
+	</select>
+	<insert id="insertFollow">
+		insert into follow values(
+			follow_seq.nextval,
+			#{send_id},
+			#{receive_id},
+			sysdate
+		)
+	</insert>
+	<delete id="deleteFollow">
+		delete from follow where send_id = #{send_id} and receive_id = #{receive_id}
+	</delete>
+	<!-- 팔로우 인서트는 함 다시 누르면 딜리트하는 기능 추가하기 -->
+	<select id="selectFollower" resultType="int">
+		select count(*) from follow where receive_id = #{userId}
+	</select>
+	<select id="selectFollow" resultType="int">
+		select count(*) from follow where send_id = #{userId}
+	</select>
+	<select id="selectFollowIn" resultType="int">
+		select count(*) from follow where send_id = #{userId}
+	</select>
+	<!--메세지 유저 내용 빼오기 -->
+	<select id="selectMessageUser" resultType="com.rm.roaming.dto.UserDto">
+		SELECT u.*
+		FROM (
+		    SELECT u.*, ROW_NUMBER() OVER (PARTITION BY u.id ORDER BY u.id) AS rn
+		    FROM rm_user u
+		    INNER JOIN follow f ON u.id = f.send_id
+		    WHERE u.id IN (SELECT send_id FROM follow WHERE receive_id = #{receiveId})
+		) u
+		WHERE u.rn = 1
+	</select>
+	<select id="randomUserList" resultType="com.rm.roaming.dto.UserDto">
+			SELECT *
+			<![CDATA[
+			FROM (
+			  SELECT *
+			  FROM rm_user
+			  WHERE id <> #{id}
+			    AND id NOT IN (
+			      SELECT send_id
+			      FROM follow
+			      WHERE receive_id = #{id}
+			    )
+			  ORDER BY DBMS_RANDOM.VALUE
+			) u
+			WHERE ROWNUM <= 10
+			]]>
+	</select>
+	<insert id="insertMyChat">
+		insert into message values(
+			message_seq.nextval,
+			#{send_id},
+			#{receive_id},
+			#{content},
+			sysdate,
+			null,
+			'N'
+		)
+	</insert>
+	<update id="updateChatCount">
+		UPDATE message
+		SET read_status = 'Y'
+		WHERE (send_id = #{receive_id} AND receive_id = #{send_id}) OR (send_id = #{send_id} AND receive_id = #{receive_id}) AND receive_id = #{send_id}
+	</update>
+	<insert id="insertYourChat">
+		insert into message values(
+			message_seq.nextval,
+			#{send_id},
+			#{receive_id},
+			#{content},
+			sysdate,
+			null,
+			'N'
+		)
+	</insert>
+	<select id="selectMyChat" resultType="com.rm.roaming.dto.MessageDto">
+		select * from message where (send_id = #{send_id} and receive_id = #{receive_id})
+		or (send_id = #{receive_id} and receive_id = #{send_id}) order by id	
+	</select>
+	<select id="selectYourChat" resultType="com.rm.roaming.dto.MessageDto">
+		select * from message where send_id = #{receive_id} and receive_id = #{send_id} order by id	
+	</select>
+	<select id="selectChatUser" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{receiveId}
+	</select>
+	<select id="searchFollowMe" resultType="int">
+		select count(*) from follow where send_id = #{send_id} and receive_id = #{receive_id} 
+	</select>
+	<!-- 메인 화면 --> 
+	<select id="mainPageFeed" resultType="com.rm.roaming.dto.FeedImageDto">
+		SELECT fi.* FROM feed f INNER JOIN feed_image fi ON f.id = fi.feed_id WHERE (fi.feed_id, fi.id)
+		IN(SELECT feed_id, min(id) FROM feed_image GROUP BY feed_id) ORDER BY fi.id DESC
+	</select>
+	<select id="mainPageReels" resultType="com.rm.roaming.dto.ReelsDto">
+		select * from reels order by id desc
+	</select>
+	
+	<!-- main page -->
+	<select id="facebookMainUserList" resultType="com.rm.roaming.dto.UserDto">
+		SELECT u.* FROM rm_user u INNER JOIN follow f ON u.id = f.send_id WHERE f.receive_id = #{userId}
+	</select>
+	<select id="selectUnion" resultType="com.rm.roaming.dto.UnionDto">
+		SELECT id, user_id, reels_id, feed_id, title, content, image, video, TYPE, reg_date
+		FROM (
+		  SELECT f.id AS id, f.user_id AS user_id, NULL AS reels_id, f.id AS feed_id, f.feed_title AS title, f.feed_content AS content, fi.feed_image AS image, NULL AS video, 'feed' AS TYPE,
+		    CASE
+		      WHEN TRUNC(f.reg_date) = TRUNC(SYSDATE) THEN '오늘'
+		      WHEN TRUNC(f.reg_date) = TRUNC(SYSDATE) - 1 THEN '1일 전'
+		      WHEN TRUNC(f.reg_date) > TRUNC(SYSDATE) - 7 THEN FLOOR(TRUNC(SYSDATE) - TRUNC(f.reg_date)) || '주 전'
+		      WHEN TRUNC(f.reg_date) > TRUNC(SYSDATE) - 30 THEN FLOOR((TRUNC(SYSDATE) - TRUNC(f.reg_date)) / 7) || '주 전'
+		      ELSE FLOOR((TRUNC(SYSDATE) - TRUNC(f.reg_date)) / 30) || '개월 전'
+		    END AS reg_date
+		  FROM feed f
+		  INNER JOIN (
+		    SELECT fi.feed_id, fi.feed_image
+		    FROM feed_image fi
+		    WHERE (fi.feed_id, fi.id) IN (SELECT feed_id, MIN(id) FROM feed_image GROUP BY feed_id)
+		  ) fi ON f.id = fi.feed_id
+		  UNION ALL
+		  SELECT r.id AS id, r.user_id AS user_id, r.id AS reels_id, NULL AS feed_id, NULL AS title, r.reels_content AS content, NULL AS image, r.reels_video AS video, 'reels' AS TYPE,
+		    CASE
+		      WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) THEN '오늘'
+		      WHEN TRUNC(r.reg_date) = TRUNC(SYSDATE) - 1 THEN '1일 전'
+		      WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 7 THEN FLOOR(TRUNC(SYSDATE) - TRUNC(r.reg_date)) || '주 전'
+		      WHEN TRUNC(r.reg_date) > TRUNC(SYSDATE) - 30 THEN FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 7) || '주 전'
+		      ELSE FLOOR((TRUNC(SYSDATE) - TRUNC(r.reg_date)) / 30) || '개월 전'
+		    END AS reg_date
+		  FROM reels r
+		) combined
+		ORDER BY id DESC
+	</select>
+	<select id="selectUnionUser" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{user_id}
+	</select>
+	<select id="selectStoryUser" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user u INNER JOIN follow f ON u.id = f.send_id
+		LEFT JOIN reels r ON u.id = r.user_id
+		LEFT JOIN feed fe ON u.id = fe.user_id
+		WHERE f.receive_id = #{userId} AND (trunc(r.reg_date) = trunc(sysdate) OR trunc(fe.reg_date) = trunc(sysdate))
+	</select>
+	<select id="storyModal" resultType="com.rm.roaming.dto.UnionDto">
+		SELECT id, user_id, title, content, image, video, TYPE, reg_date
+		FROM (
+		  SELECT f.id AS id, f.user_id AS user_id, f.feed_title AS title, f.feed_content AS content, fi.feed_image AS image, NULL AS video, 'feed' AS TYPE,
+		    reg_date
+		  FROM feed f
+		  INNER JOIN (
+		    SELECT fi.feed_id, fi.feed_image
+		    FROM feed_image fi
+		    WHERE (fi.feed_id, fi.id) IN (SELECT feed_id, MIN(id) FROM feed_image GROUP BY feed_id)
+		  ) fi ON f.id = fi.feed_id
+		  UNION ALL
+		  SELECT r.id AS id, r.user_id AS user_id, NULL AS title, r.reels_content AS content, NULL AS image, r.reels_video AS video, 'reels' AS TYPE,
+		    reg_date
+		  FROM reels r
+		) combined WHERE user_id = #{id} and rownum = 1
+		ORDER BY id DESC
+	</select>
+	<select id="selectMyIdFollow" resultType="int">
+		select count(*) from follow where send_id = #{send_id} and receive_id = #{receive_id}
+	</select>
+	<!-- 검색 -->
+	<select id="selectSearch" resultType="com.rm.roaming.dto.UserDto">
+		SELECT rm.id, rm.user_id, rm.user_name, rm.PROFILE_IMG FROM rm_user rm INNER JOIN feed f ON rm.id = f.USER_ID
+			INNER JOIN reels r ON rm.id = r.user_id 
+			WHERE f.feed_title LIKE '%' || #{search} || '%' 
+			OR f.feed_content LIKE '%' || #{search} || '%'
+			OR r.reels_content LIKE '%' || #{search} || '%' 
+			OR rm.user_id LIKE '%' || #{search} || '%' 
+			OR rm.user_name LIKE '%' || #{search} || '%' 
+		GROUP BY (rm.id, rm.user_id, rm.user_name, rm.PROFILE_IMG)
+	</select>
+	<select id="alertFollow" resultType="com.rm.roaming.dto.UserDto">
+		 SELECT * FROM rm_user u INNER JOIN follow f ON u.id = f.send_id WHERE receive_id = #{id}
+	</select>
+	<select id="alertFollowCount" resultType="int">
+		 SELECT count(*) FROM rm_user u INNER JOIN follow f ON u.id = f.send_id WHERE receive_id = #{id}
+	</select>
+	<select id="selectFeedDetailList" resultType="com.rm.roaming.dto.FeedImageDto">
+		SELECT fi.* FROM feed f INNER JOIN feed_image fi ON f.id = fi.feed_id WHERE f.USER_ID = #{userId} AND (fi.feed_id, fi.id)
+		IN(SELECT feed_id, min(id) FROM feed_image GROUP BY feed_id) ORDER BY fi.id DESC
+	</select>
+	<select id="selectFeedEachCount" resultType="int">
+		SELECT count(*) FROM feed_comment WHERE feed_id = #{feedId}
+	</select>
+	<select id="naviPhoto" resultType="com.rm.roaming.dto.UserDto">
+		select * from rm_user where id = #{userId}
+	</select>
+	<insert id="insertFeedPoint">
+		INSERT INTO point VALUES(
+			point_seq.nextval,
+			#{user_id},
+			'300',
+			'획득',
+			'피드릴스',
+			SYSDATE
+		)
+	</insert>
+	<select id="feedCommentModal" resultType="com.rm.roaming.dto.FeedImageDto">
+			SELECT * 
+			FROM feed f 
+			INNER JOIN feed_image fi ON f.id = fi.feed_id 
+			WHERE f.id = #{feed_id} AND 
+			(fi.feed_id, fi.id) IN (SELECT feed_id, min(id) FROM feed_image GROUP BY feed_id) 
+			ORDER BY fi.id DESC
+	</select>
+	<select id="feedModalUserSearch" resultType="com.rm.roaming.dto.FeedDto">
+		select * from feed where id = #{feed_id}
+	</select>
+	<select id="feedModalUserInfo" resultType="com.rm.roaming.dto.UserDto">
+		SELECT * FROM rm_user rm INNER JOIN feed f ON rm.id = f.user_id WHERE rm.id = #{user_id} AND f.id = #{feed_id}
+	</select>
+	<select id="myPageUserReels" resultType="com.rm.roaming.dto.ReelsDto">
+		select * from reels where user_id = #{userId}
+	</select>
+</mapper>
