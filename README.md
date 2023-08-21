@@ -15,7 +15,7 @@
 * 2023.06 ~ 2023.08 (2개월)
 
 ### 🧑‍🤝‍🧑 맴버구성/역할
-<img width="1150" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/8849b32b-d653-45c9-b9a6-a37820ecef74">
+<img width="1337" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/112f67a7-ab2d-4d6b-9ced-f04c661cf336">
 
 ### ⚙️ 개발 환경
 - `Java, JavaScript, JSP`
