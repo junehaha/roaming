@@ -89,9 +89,9 @@ function kakaoReady(){
    const quantity = 1;
    const total_amount= finalprice;
    const tax_free_amount=finalprice;
-   const approval_url= 'http://172.30.1.80:8181/roaming/userboard/reserveSuccessPage';
-   const cancel_url = "http://172.30.1.80:8181/roaming/userboard/reserveCancelPage?hotel_id="+${info.roomGroupDto.hotel_id};
-   const fail_url = 'http://172.30.1.80:8181/roaming/userboard/reserveFailPage?hotel_id='+${info.roomGroupDto.hotel_id};
+   const approval_url= 'http://localhost:8181/roaming/userboard/reserveSuccessPage';
+   const cancel_url = "http://localhost:8181/roaming/userboard/reserveCancelPage?hotel_id="+${info.roomGroupDto.hotel_id};
+   const fail_url = 'http://localhost:8181/roaming/userboard/reserveFailPage?hotel_id='+${info.roomGroupDto.hotel_id};
    
    const coupon = document.getElementById("coupon")
    const couponId = coupon.value;

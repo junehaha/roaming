@@ -74,7 +74,7 @@ public class SellerBoardServiceImpl {
 		hotelDocuDto.setHotel_id(hotel_id);
 		if (hotelImg != null) {
 			
-			String rootFolder =  "/Users/su/Desktop/uploadFiles/";
+			String rootFolder =  "C:/uploadFiles/";
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			String today = sdf.format(new Date());
 
@@ -100,7 +100,7 @@ public class SellerBoardServiceImpl {
 		}
 		if (hotelDocu != null) {
 			
-			String rootFolder =  "/Users/su/Desktop/uploadFiles/";
+			String rootFolder =  "C:/uploadFiles/";
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			String today = sdf.format(new Date());
 
@@ -184,7 +184,7 @@ public void registerGroupImg(int groupId,MultipartFile groupImg,MultipartFile[] 
 				if (multipartFile.isEmpty()) {
 					continue;
 				}
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
 
@@ -214,7 +214,7 @@ public void registerGroupImg(int groupId,MultipartFile groupImg,MultipartFile[] 
 		}
 		if (groupImg != null) {
 			
-			String rootFolder =  "/Users/su/Desktop/uploadFiles/";
+			String rootFolder =  "C:/uploadFiles/";
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			String today = sdf.format(new Date());
 
@@ -438,7 +438,7 @@ public void registerGroupImg(int groupId,MultipartFile groupImg,MultipartFile[] 
 		HotelDocuDto hotelDocuDto = new HotelDocuDto();
 		if (file != null) {
 			
-			String rootFolder =  "/Users/su/Desktop/uploadFiles/";
+			String rootFolder =  "C:/uploadFiles/";
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			String today = sdf.format(new Date());
 

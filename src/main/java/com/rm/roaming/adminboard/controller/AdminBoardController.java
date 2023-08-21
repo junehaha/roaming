@@ -154,7 +154,7 @@ public class AdminBoardController {
 					continue;
 				}
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
@@ -219,7 +219,7 @@ public class AdminBoardController {
 					continue;
 				}
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
@@ -273,7 +273,7 @@ public class AdminBoardController {
 					continue;
 				}
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
@@ -316,7 +316,7 @@ public class AdminBoardController {
 					continue;
 				}
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
@@ -398,7 +398,7 @@ public class AdminBoardController {
 						continue;
 					}
 					
-					String rootFolder = "/Users/su/Desktop/uploadFiles/";
+					String rootFolder = "C:/uploadFiles/";
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 					String today = sdf.format(new Date());
@@ -440,7 +440,7 @@ public class AdminBoardController {
 						continue;
 					}
 					
-					String rootFolder = "/Users/su/Desktop/uploadFiles/";
+					String rootFolder = "C:/uploadFiles/";
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 					String today = sdf.format(new Date());

@@ -17,7 +17,7 @@ function kakaoLogin2(){
 	}
 	xhr.open("post","https://kauth.kakao.com/oauth/token");
 	xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=utf-8");
-	xhr.send("grant_type=authorization_code&client_id=9c133e8e0ca99f4e08b962a90d53f8a4&redirect_uri=http://172.30.1.80:8181/roaming/user/kakaoToken&code="+'${code}')
+	xhr.send("grant_type=authorization_code&client_id=9c133e8e0ca99f4e08b962a90d53f8a4&redirect_uri=http://localhost:8181/roaming/user/kakaoToken&code="+'${code}')
 }
 
 function kakoaLogin3(accessToken){

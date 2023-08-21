@@ -44,7 +44,7 @@
 </style>
 <script>
 function kakaoLogin1(){
-	window.location.href = "https://kauth.kakao.com/oauth/authorize?client_id=9c133e8e0ca99f4e08b962a90d53f8a4&redirect_uri=http://172.30.1.80:8181/roaming/user/kakaoToken&response_type=code"
+	window.location.href = "https://kauth.kakao.com/oauth/authorize?client_id=9c133e8e0ca99f4e08b962a90d53f8a4&redirect_uri=http://localhost:8181/roaming/user/kakaoToken&response_type=code"
 }
 
 function loginFilter(){

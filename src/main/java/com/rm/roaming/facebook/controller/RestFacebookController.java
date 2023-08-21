@@ -468,7 +468,7 @@ public class RestFacebookController {
 				if(multipartFile.isEmpty()) {
 					continue;
 				}
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 				String today = sdf.format(new Date());
 				File targetFolder = new File(rootFolder + today);
@@ -502,7 +502,7 @@ public class RestFacebookController {
 		UserDto sessionUser = (UserDto)session.getAttribute("sessionUser");
 		int sendId = sessionUser.getId();
 		if(reelsFile != null) {
-			String rootFolder = "/Users/su/Desktop/uploadFiles/";
+			String rootFolder = "C:/uploadFiles/";
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			String today = sdf.format(new Date());
 			File targetFolder = new File(rootFolder + today);

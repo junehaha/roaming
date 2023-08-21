@@ -222,7 +222,7 @@ public class UserCsController {
 					
 				System.out.println("파일명 : " + multipartFile.getOriginalFilename());
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				// 상세 날짜별 폴더 생성 로직
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
@@ -286,7 +286,7 @@ public class UserCsController {
 					
 				System.out.println("파일명 : " + multipartFile.getOriginalFilename());
 				
-				String rootFolder = "/Users/su/Desktop/uploadFiles/";
+				String rootFolder = "C:/uploadFiles/";
 				
 				// 상세 날짜별 폴더 생성 로직
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");

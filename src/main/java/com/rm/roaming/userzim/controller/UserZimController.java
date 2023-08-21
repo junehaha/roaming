@@ -70,7 +70,7 @@ public class UserZimController {
 			
 			System.out.println("파일명 : " + zimImage.getOriginalFilename());
 			
-			String rootFolder = "/Users/su/Desktop/uploadFiles/";
+			String rootFolder = "C:/uploadFiles/";
 			
 			// 메인 날짜별 폴더 생성 로직
 			
