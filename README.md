@@ -63,9 +63,11 @@
 - 커뮤니티 게시물 작성 / 상세
 - 프로필 / 메시지
 
-#### 메인 페이지 - <a href="https://github.com/chaehyuenwoo/SpringBoot-Project-MEGABOX/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(%EB%A9%94%EC%9D%B8-Page)" >상세보기 - WIKI 이동</a>
-- YouTube API 연동
-- 메인 포스터(영화) 이미지 슬라이드(CSS)
+#### 쿠폰 발급 / 포인트 샵 - <a href="https://github.com/junehaha/roaming/wiki/%EC%BF%A0%ED%8F%B0---%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%83%B5" >상세보기 - WIKI 이동</a>
+- 쿠폰 목록 페이지 / 발급
+- 포인트 샵 홈
+- 상품 상세 보기
+- 상품 구매
 #### 1대1문의 및 공지사항 - <a href="" >상세보기 - WIKI 이동</a> 
 - 글 작성, 읽기, 수정, 삭제(CRUD)
 
