@@ -43,6 +43,7 @@
 - **Database** :Oracle 11g XE
 
 ## 📌 주요 기능
+### 👥 로밍 유저
 #### Main(User) - <a href="https://github.com/junehaha/roaming/wiki/Main-(User)" >상세보기 - WIKI 이동</a>
 - Main Page
 - 로그인 / 회원가입
