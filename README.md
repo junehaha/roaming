@@ -52,9 +52,10 @@
 - 동행 상세 보기
 - 동행 생성 / 신청
 - 동행 대화
-#### 마이 페이지 - <a href="https://github.com/chaehyuenwoo/SpringBoot-Project-MEGABOX/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(Member)" >상세보기 - WIKI 이동</a>
-- 주소 API 연동
-- 회원정보 변경
+#### 숙소 - <a href="https://github.com/junehaha/roaming/wiki/%EC%88%99%EC%86%8C-%EC%98%88%EC%95%BD" >상세보기 - WIKI 이동</a>
+- 숙소 메인 페이지
+- 숙소 상세 보기
+- 숙소 예약 / 결제
 
 #### 영화 예매 - <a href="https://github.com/chaehyuenwoo/SpringBoot-Project-MEGABOX/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EC%86%8C%EA%B0%9C(%EC%98%81%ED%99%94-%EC%98%88%EB%A7%A4)" >상세보기 - WIKI 이동</a>
 - 영화 선택(날짜 지정)
