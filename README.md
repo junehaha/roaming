@@ -29,11 +29,14 @@
 
 <br>
 
-## 🕰️ 개발 기간
+### 🕰️ 개발 기간
 * 2023.06 ~ 2023.08 (2개월)
+<br>
 
 ### 🧑‍🤝‍🧑 맴버구성/역할
 <img width="1337" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/112f67a7-ab2d-4d6b-9ced-f04c661cf336">
+<br> 
+
 
 ### ⚙️ 개발 환경
 - `Java, JavaScript, JSP`
@@ -41,6 +44,30 @@
 - **IDE** : Eclipse(STS 3.9.18)
 - **Framework** : Spring Framework 5.0.7
 - **Database** :Oracle 11g XE
+<br>
+
+### 📋 ERD / 프로젝트 구조
+#### ERD 
+  <img width="1280" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/17046d38-36e9-4ccf-ac2b-843687d82825"> 
+  
+#### 프로젝트 구조 
+
+<details>
+<summary>유저</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/a52d5dc9-0e2e-439c-9497-4aa19e38d51d">
+</details>
+
+<details>
+<summary>판매자(파트너)</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/d7dc2e7e-320b-49a3-9b4a-c7276fd8c289">
+</details>
+
+<details>
+<summary>관리자</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/c90d45e6-e1bd-4fe2-8d8b-b43eade51b5c">
+</details>
+<br> 
+
 
 ## 📌 주요 기능
 ### 👥 로밍 유저
