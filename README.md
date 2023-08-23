@@ -49,9 +49,39 @@
 
 ### 📋 ERD / 프로젝트 구조
 #### ERD 
-  <img width="1280" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/17046d38-36e9-4ccf-ac2b-843687d82825"> 
-  
-#### 프로젝트 구조 
+  <img width="1280" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/17046d38-36e9-4ccf-ac2b-843687d82825">  
+<br> 
+
+
+<details>
+<summary>동행 ERD</summary> 
+<img src="https://github.com/junehaha/roaming/assets/131428230/330eeec8-355e-4394-bd9e-e1ecc580f690">
+</details>
+
+<details>
+<summary>숙소 / 파트너 ERD</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/e7730ef7-1914-48db-8b60-2fa97044730d">
+</details>
+
+<details>
+<summary>포인트 샵 / 쿠폰 ERD</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/4390031b-621d-4807-9d40-8fb5f15962a4">
+</details>
+
+<details>
+<summary>커뮤니티 ERD</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/2ae32e65-c97e-4fc4-b33d-3867cc85ad64">
+</details>
+
+<details>
+<summary>고객센터 / 관리자 / 짐 서비스 ERD</summary>
+<img src="https://github.com/junehaha/roaming/assets/131428230/114fef2e-2d99-4ca9-882f-39d45bc8c96d">
+</details>
+<br> 
+
+
+
+#### 기능별 구조화 
 
 <details>
 <summary>유저</summary>
