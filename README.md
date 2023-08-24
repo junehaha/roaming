@@ -47,56 +47,46 @@
 - **Database** :Oracle 11g XE
 <br>
 
-### 📋 ERD / 프로젝트 구조
-#### ERD 
+### 📋 ERD
+#### 전체 ERD 
   <img width="1280" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/17046d38-36e9-4ccf-ac2b-843687d82825">  
 <br> 
 
 
-<details>
-<summary>동행 ERD</summary> 
-<img src="https://github.com/junehaha/roaming/assets/131428230/330eeec8-355e-4394-bd9e-e1ecc580f690">
-</details>
+#### 동행 ERD 
+<img width="878" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/b4901c68-7ee1-49d8-8751-7d3b2857a138">
 
-<details>
-<summary>숙소 / 파트너 ERD</summary>
-<img src="https://github.com/junehaha/roaming/assets/131428230/e7730ef7-1914-48db-8b60-2fa97044730d">
-</details>
 
-<details>
-<summary>포인트 샵 / 쿠폰 ERD</summary>
-<img src="https://github.com/junehaha/roaming/assets/131428230/4390031b-621d-4807-9d40-8fb5f15962a4">
-</details>
+#### 숙소 / 파트너 ERD 
+<img width="900" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/bad4c676-72eb-4de6-a475-0e98d86198f1">
 
-<details>
-<summary>커뮤니티 ERD</summary>
-<img src="https://github.com/junehaha/roaming/assets/131428230/2ae32e65-c97e-4fc4-b33d-3867cc85ad64">
-</details>
+#### 포인트 샵 / 쿠폰 ERD 
+<img width="892" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/04838939-2d23-443e-8191-fd93c58b5f61">
 
-<details>
-<summary>고객센터 / 관리자 / 짐 서비스 ERD</summary>
-<img src="https://github.com/junehaha/roaming/assets/131428230/114fef2e-2d99-4ca9-882f-39d45bc8c96d">
-</details>
+#### 커뮤니티 ERD 
+<img width="842" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/c49616e0-2570-4cd4-a09a-f94d934d67ea">
+
+
+#### 고객센터 / 관리자 / 짐 서비스 ERD</summary>
+<img width="909" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/c11d0ed8-87af-4bac-a70d-6264dcbd3bdd">
 <br> 
 
+ 
+----
 
 
-#### 기능별 구조화 
+### 🪢 기능별 구조화 
 
-<details>
-<summary>유저</summary>
+
 <img src="https://github.com/junehaha/roaming/assets/131428230/a52d5dc9-0e2e-439c-9497-4aa19e38d51d">
-</details>
 
-<details>
-<summary>판매자(파트너)</summary>
+
+
 <img src="https://github.com/junehaha/roaming/assets/131428230/d7dc2e7e-320b-49a3-9b4a-c7276fd8c289">
-</details>
 
-<details>
-<summary>관리자</summary>
+
+
 <img src="https://github.com/junehaha/roaming/assets/131428230/c90d45e6-e1bd-4fe2-8d8b-b43eade51b5c">
-</details>
 <br> 
 
 
