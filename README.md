@@ -76,17 +76,19 @@
 
 
 ### 🪢 기능별 구조화 
-
-
-<img src="https://github.com/junehaha/roaming/assets/131428230/a52d5dc9-0e2e-439c-9497-4aa19e38d51d">
-
-
-
-<img src="https://github.com/junehaha/roaming/assets/131428230/d7dc2e7e-320b-49a3-9b4a-c7276fd8c289">
+<br> 
 
 
 
-<img src="https://github.com/junehaha/roaming/assets/131428230/c90d45e6-e1bd-4fe2-8d8b-b43eade51b5c">
+<img width="1374" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/4f8434fa-6856-46a4-b20c-11b34acb6760">
+
+
+
+<img width="1255" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/7f024393-c9ff-42bf-8428-6a670b4bd2a7">
+
+
+
+<img width="1271" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/b15eaaa8-d8be-4192-804b-4f56c0562bba">
 <br> 
 
 
