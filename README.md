@@ -1,7 +1,7 @@
 # Roaming
 
 
-<div align="center"><img width="400"  alt="originalLogo" src="https://github.com/junehaha/roaming/assets/131428230/734bedd4-5dd8-4731-a063-59da0bd3ef58"></div>
+<div align="center"><img width="1337"  alt="originalLogo" src="https://github.com/junehaha/roaming/assets/131428230/734bedd4-5dd8-4731-a063-59da0bd3ef58"></div>
 
 
 ## 🖥️ 프로젝트 소개
