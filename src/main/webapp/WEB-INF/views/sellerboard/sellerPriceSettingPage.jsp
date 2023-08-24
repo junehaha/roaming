@@ -248,10 +248,16 @@ function inputPercent(day){
 	const groupObj = dayPriceObj.groups.find(groups => groups.group == groupId);
 	const daysObj = groupObj.days.find(days => days.day == day);
      var input = document.getElementById("day" + day + "per");
-	    if (input.value === "") {
-	      input.value = "0";
-	    }
-	
+   
+     const inputValue = parseInt(input.value);
+
+     // Check
+     if (!isNaN(inputValue) && inputValue >= -100 && inputValue <= 500) {
+       daysObj.change_price = inputValue;
+     } else {
+       daysObj.change_price = 0;
+       input.value = "0";
+     }
 	
 	daysObj.change_price = parseInt(input.value);
 	changePrice(day)
@@ -990,7 +996,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="text" class="form-control" id="day1per" oninput="inputPercent(1)">
+													  <input type="text" class="form-control" id="day1per" onblur="inputPercent(1)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1021,7 +1027,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="text" class="form-control"  id="day2per" oninput="inputPercent(2)">
+													  <input type="text" class="form-control"  id="day2per" onblur="inputPercent(2)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1051,7 +1057,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="text" class="form-control" id="day3per" oninput="inputPercent(3)">
+													  <input type="text" class="form-control" id="day3per" onblur="inputPercent(3)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1082,7 +1088,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="text" class="form-control" id="day4per" oninput="inputPercent(4)">
+													  <input type="text" class="form-control" id="day4per" onblur="inputPercent(4)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1112,7 +1118,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="number" class="form-control" id="day5per" oninput="inputPercent(5)"  min="0" max="100">
+													  <input type="text" class="form-control" id="day5per" onblur="inputPercent(5)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1142,7 +1148,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="number" class="form-control" id="day6per" oninput="inputPercent(6)"  min="0" max="100">
+													  <input type="text" class="form-control" id="day6per" onblur="inputPercent(6)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
@@ -1173,7 +1179,7 @@ class="ps-3 text-white fs-5 pt-0">도메인 연결</span>
 										     <div class="row">
 										    	<div class="col">
 										    		<div class="input-group">
-													  <input type="number" class="form-control" id="day0per" oninput="inputPercent(0)"  min="0" max="100">
+													  <input type="text" class="form-control" id="day0per" onblur="inputPercent(0)">
 													  <span class="input-group-text">%</span>
 													</div>
 												</div>	
