@@ -39,7 +39,7 @@
 <br>
 
 ### 🧑‍🤝‍🧑 맴버구성/역할
-![image](https://github.com/junehaha/roaming/assets/131428230/fdb981ed-d4d6-490f-960a-f2f817faa2ba)
+<img width="1393" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/459ff5bf-e666-407c-8632-cfc9424b485b">
 <br> 
 
 
