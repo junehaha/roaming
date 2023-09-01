@@ -2,7 +2,8 @@
 
 <br> 
 
-<div align="center"><img width="500"  alt="originalLogo" src="https://github.com/junehaha/roaming/assets/131428230/734bedd4-5dd8-4731-a063-59da0bd3ef58"></div>
+<div align="center"><img width="388" alt="originalLogo-removebg-preview" src="https://github.com/junehaha/roaming/assets/131428230/45bcc1f5-549b-4d7e-95fb-49626829ac76">
+</div>
 
 
 <br> 
