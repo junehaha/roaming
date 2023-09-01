@@ -83,16 +83,16 @@
 <br> 
 
 
-
-<img width="1374" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/4f8434fa-6856-46a4-b20c-11b34acb6760">
-
-
-
-<img width="1255" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/7f024393-c9ff-42bf-8428-6a670b4bd2a7">
+#### 👥 로밍 유저
+![image](https://github.com/junehaha/roaming/assets/131428230/db38f8e0-1e0f-4ff9-9f78-9a67a772f3a5)
 
 
+#### 🛠 로밍 관리자
+![image](https://github.com/junehaha/roaming/assets/131428230/7528fb5f-149d-464e-9a47-ca19191a19f6)
 
-<img width="1271" alt="image" src="https://github.com/junehaha/roaming/assets/131428230/b15eaaa8-d8be-4192-804b-4f56c0562bba">
+
+#### 🏨 로밍 파트너(판매자)
+![image](https://github.com/junehaha/roaming/assets/131428230/1df1701f-78f2-4723-bf55-faccae94b612)
 <br> 
 
 
